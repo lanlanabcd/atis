@@ -43,10 +43,10 @@ def interpret_args():
                         type=str,
                         default='output_vocabulary.pkl')
 
-    parser.add_argument('--input_key', type=str, default='nl_with_dates')
+    parser.add_argument('--input_key', type=str, default='utterance')
 
-    parser.add_argument('--anonymize', type=bool, default=False)
-    parser.add_argument('--anonymization_scoring', type=bool, default=False)
+    parser.add_argument('--anonymize', type=bool, default=True)
+    parser.add_argument('--anonymization_scoring', type=bool, default=True)
     parser.add_argument('--use_snippets', type=bool, default=False)
 
     ### Debugging/logging parameters
@@ -58,21 +58,21 @@ def interpret_args():
     parser.add_argument('--results_file', type=str, default='results.txt')
 
     ### Model architecture
-    parser.add_argument('--input_embedding_size', type=int, default=400)
-    parser.add_argument('--output_embedding_size', type=int, default=400)
+    parser.add_argument('--input_embedding_size', type=int, default=100)
+    parser.add_argument('--output_embedding_size', type=int, default=100)
 
-    parser.add_argument('--encoder_state_size', type=int, default=800)
-    parser.add_argument('--decoder_state_size', type=int, default=800)
+    parser.add_argument('--encoder_state_size', type=int, default=128)
+    parser.add_argument('--decoder_state_size', type=int, default=128)
 
     parser.add_argument('--encoder_num_layers', type=int, default=1)
     parser.add_argument('--decoder_num_layers', type=int, default=2)
     parser.add_argument('--snippet_num_layers', type=int, default=1)
 
     parser.add_argument('--maximum_utterances', type=int, default=4)
-    parser.add_argument('--state_positional_embeddings', type=bool, default=False)
+    parser.add_argument('--state_positional_embeddings', type=bool, default=True)
     parser.add_argument('--positional_embedding_size', type=int, default=50)
 
-    parser.add_argument('--snippet_age_embedding', type=bool, default=False)
+    parser.add_argument('--snippet_age_embedding', type=bool, default=True)
     parser.add_argument('--snippet_age_embedding_size', type=int, default=64)
     parser.add_argument('--max_snippet_age_embedding', type=int, default=4)
     parser.add_argument('--previous_decoder_snippet_encoding', type=bool, default=False)
@@ -93,16 +93,16 @@ def interpret_args():
     parser.add_argument('--learning_rate_ratio', type=float, default=0.8)
 
     parser.add_argument('--interaction_level', type=bool, default=False)
-    parser.add_argument('--reweight_batch', type=bool, default=False)
+    parser.add_argument('--reweight_batch', type=bool, default=True)
 
     ### Setting
-    parser.add_argument('--train', type=bool, default=False)
+    parser.add_argument('--train', type=bool, default=True)
 
     parser.add_argument('--evaluate', type=bool, default=False)
     parser.add_argument('--attention', type=bool, default=False)
-    parser.add_argument('--save_file', type=str, default="")
+    parser.add_argument('--save_file', type=str, default="logs/save_20")
     parser.add_argument('--enable_testing', type=bool, default=False)
-    parser.add_argument('--use_predicted_queries', type=bool, default=False)
+    parser.add_argument('--use_predicted_queries', type=bool, default=True)
     parser.add_argument('--evaluate_split', type=str, default='dev')
     parser.add_argument('--evaluate_with_gold_forcing', type=bool, default=False)
     parser.add_argument('--eval_maximum_sql_length', type=int, default=300)
@@ -115,6 +115,7 @@ def interpret_args():
     parser.add_argument('--database_username', type=str, default="root")
     parser.add_argument('--database_password', type=str, default="1234")
     parser.add_argument('--database_timeout', type=int, default=2)
+    parser.add_argument('--model_level', type=int, default=0)
 
     args = parser.parse_args()
 
@@ -128,8 +129,8 @@ def interpret_args():
 
     if args.train:
         args_file = args.logdir + '/args.log'
-        if os.path.exists(args_file):
-            raise ValueError('Warning: arguments already exist in ' + str(args_file))
+        #if os.path.exists(args_file):
+        #    raise ValueError('Warning: arguments already exist in ' + str(args_file))
         with open(args_file, 'w') as infile:
             infile.write(str(args))
            
