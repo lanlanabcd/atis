@@ -3,6 +3,38 @@ import numpy as np
 
 EOS_TOK = "_EOS"
 
+class InteractionModel():
+    # initialization, construct all the parameters for the model
+    def __init__(self, params, input_vocab, output_vocab):
+        self.pc = dy.ParameterCollection()
+        self.input_vocab_len = len(input_vocab.inorder_tokens)
+        self.output_vocab_len = len(output_vocab.inorder_tokens)
+
+        self.input_embedder = self.pc.add_lookup_parameters(
+            dim=(self.input_vocab_len, params.input_embedding_size),
+            init="normal")
+
+        self.output_embedder = self.pc.add_lookup_parameters(
+            dim=(len(output_vocab.inorder_tokens), params.output_embedding_size),
+            init="normal")
+
+        self.encoder = Encoder(params, self.pc)
+        self.decoder = Decoder(params, self.pc, self.output_vocab_len)
+        self.output_vocabulary = output_vocab
+
+    def encode(self, params, input_sequence):
+        states = self.encoder(params, input_sequence, self.input_embedder)
+        return states
+
+    def decode(self,params, encoder_states):
+        outputs = self.decoder(params, self.output_embedder, encoder_states, self.output_vocabulary)
+        return outputs
+
+    def all_process(self, params, input_sequence):
+        encoder_states = self.encoder(params, input_sequence, self.input_embedder)
+        outputs = self.decoder(params, self.output_embedder, encoder_states, self.output_vocabulary)
+        return outputs
+
 
 class UtteranceModel():
     # initialization, construct all the parameters for the model
@@ -25,6 +57,7 @@ class UtteranceModel():
     def encode(self, params, input_sequence):
         states = self.encoder(params, input_sequence, self.input_embedder)
         return states[-1]
+
 
 
 class Decoder():
@@ -66,6 +99,7 @@ class Decoder():
             looptime += 1
             if token == EOS_TOK or looptime > params.train_maximum_sql_length:
                 keep_looping = False
+        return outputs
 
 
 class Encoder():
