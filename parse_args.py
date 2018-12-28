@@ -43,7 +43,7 @@ def interpret_args():
                         type=str,
                         default='output_vocabulary.pkl')
 
-    parser.add_argument('--input_key', type=str, default='nl_with_dates')
+    parser.add_argument('--input_key', type=str, default='utterance')
 
     parser.add_argument('--anonymize', type=bool, default=False)
     parser.add_argument('--anonymization_scoring', type=bool, default=False)
@@ -96,7 +96,7 @@ def interpret_args():
     parser.add_argument('--reweight_batch', type=bool, default=False)
 
     ### Setting
-    parser.add_argument('--train', type=bool, default=False)
+    parser.add_argument('--train', type=bool, default=True)
 
     parser.add_argument('--evaluate', type=bool, default=False)
     parser.add_argument('--attention', type=bool, default=False)
@@ -128,8 +128,8 @@ def interpret_args():
 
     if args.train:
         args_file = args.logdir + '/args.log'
-        if os.path.exists(args_file):
-            raise ValueError('Warning: arguments already exist in ' + str(args_file))
+        #if os.path.exists(args_file):
+        #    raise ValueError('Warning: arguments already exist in ' + str(args_file))
         with open(args_file, 'w') as infile:
             infile.write(str(args))
            
