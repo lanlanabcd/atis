@@ -230,7 +230,7 @@ def evaluate_utterance_sample(sample,
     predictions = []
     for i, item in enumerate(sample):
         _, loss, predicted_seq = model.eval_step(
-            item, max_generation_length, feed_gold_query=gold_forcing)
+            item, feed_gold_query=gold_forcing)
         loss = loss / len(item.gold_query())
         predictions.append(predicted_seq)
 

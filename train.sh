@@ -9,8 +9,8 @@ python3 run.py --raw_train_filename="../atis_data/data/resplit/processed/train_w
                --use_snippets=1 \
                --state_positional_embeddings=1 \
                --snippet_age_embedding=1 \
-               --discourse_level_lstm=1 \
-               --interaction_level=1 \
+               --discourse_level_lstm=0 \
+               --interaction_level=0 \
                --reweight_batch=1 \
                --train=1 
 

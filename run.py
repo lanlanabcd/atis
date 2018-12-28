@@ -125,8 +125,8 @@ def train(model, data, params):
     previous_epoch_loss = float('inf')
     maximum_validation_accuracy = 0.
     maximum_string_accuracy = 0.
-    crayon = CrayonClient(hostname="localhost")
-    experiment = crayon.create_experiment(params.logdir)
+    #crayon = CrayonClient(hostname="localhost")
+    #experiment = crayon.create_experiment(params.logdir)
 
     countdown = int(patience)
 
@@ -146,13 +146,15 @@ def train(model, data, params):
                 model,
                 randomize=not params.deterministic)
         else:
+            '''
             epoch_loss = train_epoch_with_utterances(
                 train_batches,
                 model,
                 randomize=not params.deterministic)
-
+            '''
+            epoch_loss = 20
         log.put("train epoch loss:\t" + str(epoch_loss))
-        experiment.add_scalar_value("train_loss", epoch_loss, step=epochs)
+        #experiment.add_scalar_value("train_loss", epoch_loss, step=epochs)
 
         model.set_dropout(0.)
 
@@ -171,19 +173,20 @@ def train(model, data, params):
                 ":\t" +
                 "%.2f" %
                 value)
-            experiment.add_scalar_value(
-                "train_gold_" + name.name, value, step=epochs)
+            #experiment.add_scalar_value(
+            #    "train_gold_" + name.name, value, step=epochs)
 
         # Run an evaluation step on the validation set.
         valid_eval_results = eval_fn(valid_examples,
                                      model,
+                                     params.train_maximum_sql_length,
                                      "valid-eval",
                                      gold_forcing=True,
                                      metrics=VALID_EVAL_METRICS)[0]
         for name, value in valid_eval_results.items():
             log.put("valid gold-passing " + name.name + ":\t" + "%.2f" % value)
-            experiment.add_scalar_value(
-                "valid_gold_" + name.name, value, step=epochs)
+            #experiment.add_scalar_value(
+            #    "valid_gold_" + name.name, value, step=epochs)
 
         valid_loss = valid_eval_results[Metrics.LOSS]
         valid_token_accuracy = valid_eval_results[Metrics.TOKEN_ACCURACY]
@@ -194,10 +197,10 @@ def train(model, data, params):
             log.put(
                 "learning rate coefficient:\t" +
                 str(learning_rate_coefficient))
-        experiment.add_scalar_value(
-            "learning_rate",
-            learning_rate_coefficient,
-            step=epochs)
+        #experiment.add_scalar_value(
+        #    "learning_rate",
+        #    learning_rate_coefficient,
+        #    step=epochs)
         previous_epoch_loss = valid_loss
         saved = False
         if valid_token_accuracy > maximum_validation_accuracy:
@@ -234,7 +237,7 @@ def train(model, data, params):
 
         countdown -= 1
         log.put("countdown:\t" + str(countdown))
-        experiment.add_scalar_value("countdown", countdown, step=epochs)
+        #experiment.add_scalar_value("countdown", countdown, step=epochs)
         log.put("")
 
         epochs += 1
