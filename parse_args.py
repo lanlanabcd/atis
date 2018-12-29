@@ -96,13 +96,13 @@ def interpret_args():
     parser.add_argument('--reweight_batch', type=bool, default=True)
 
     ### Setting
-    parser.add_argument('--train', type=bool, default=True)
+    parser.add_argument('--train', type=bool, default=False)
 
-    parser.add_argument('--evaluate', type=bool, default=False)
+    parser.add_argument('--evaluate', type=bool, default=True)
     parser.add_argument('--attention', type=bool, default=False)
-    parser.add_argument('--save_file', type=str, default="logs/save_20")
+    parser.add_argument('--save_file', type=str, default="logs/save_0")
     parser.add_argument('--enable_testing', type=bool, default=False)
-    parser.add_argument('--use_predicted_queries', type=bool, default=True)
+    parser.add_argument('--use_predicted_queries', type=bool, default=False)
     parser.add_argument('--evaluate_split', type=str, default='dev')
     parser.add_argument('--evaluate_with_gold_forcing', type=bool, default=False)
     parser.add_argument('--eval_maximum_sql_length', type=int, default=300)
@@ -113,7 +113,7 @@ def interpret_args():
     parser.add_argument('--interactive', type=bool, default=False)
 
     parser.add_argument('--database_username', type=str, default="root")
-    parser.add_argument('--database_password', type=str, default="1234")
+    parser.add_argument('--database_password', type=str, default="mysql12928")
     parser.add_argument('--database_timeout', type=int, default=2)
     parser.add_argument('--model_level', type=int, default=0)
 

@@ -13,7 +13,7 @@ python3 run.py --raw_train_filename="../atis_data/data/resplit/processed/train_w
                --reweight_batch=1 \
                --evaluate=1 \
                --evaluate_split="dev" \
-               --use_predicted_queries=1 \
+               --use_predicted_queries=0 \
                --save_file="logs/save_20" # You need to edit this.
 
-python3 metric_averages.py "results_file.json" # You need to edit this.
+python3 metric_averages.py "logs/devgold_predictions.json" # You need to edit this.

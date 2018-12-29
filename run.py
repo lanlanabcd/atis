@@ -22,6 +22,7 @@ from visualize_attention import AttentionGraph
 VALID_EVAL_METRICS = [
     Metrics.LOSS,
     Metrics.TOKEN_ACCURACY,
+    Metrics.CORRECT_TABLES,
     Metrics.STRING_ACCURACY]
 TRAIN_EVAL_METRICS = [Metrics.LOSS, Metrics.TOKEN_ACCURACY]
 FINAL_EVAL_METRICS = [
@@ -182,6 +183,9 @@ def train(model, data, params):
                                      params.train_maximum_sql_length,
                                      "valid-eval",
                                      gold_forcing=True,
+                                     database_username=params.database_username,
+                                     database_password=params.database_password,
+                                     database_timeout=params.database_timeout,
                                      metrics=VALID_EVAL_METRICS)[0]
         for name, value in valid_eval_results.items():
             log.put("valid gold-passing " + name.name + ":\t" + "%.2f" % value)
