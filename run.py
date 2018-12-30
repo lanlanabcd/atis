@@ -147,13 +147,10 @@ def train(model, data, params):
                 model,
                 randomize=not params.deterministic)
         else:
-            '''
             epoch_loss = train_epoch_with_utterances(
                 train_batches,
                 model,
                 randomize=not params.deterministic)
-            '''
-            epoch_loss = 20
         log.put("train epoch loss:\t" + str(epoch_loss))
         #experiment.add_scalar_value("train_loss", epoch_loss, step=epochs)
 

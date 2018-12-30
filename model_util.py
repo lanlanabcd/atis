@@ -305,6 +305,8 @@ def evaluate_interaction_sample(sample,
 
     use_gpu = not ("--no_gpus" in sys.argv or "--no_gpus=1" in sys.argv)
     for i, interaction in enumerate(sample):
+        if i % 20 == 0:
+            print(i, "interactions!")
         if use_gpu and interaction.identifier in ignore_with_gpu:
             continue
         elif not use_gpu and interaction.identifier not in ignore_with_gpu:
