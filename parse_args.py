@@ -47,7 +47,7 @@ def interpret_args():
 
     parser.add_argument('--anonymize', type=bool, default=True)
     parser.add_argument('--anonymization_scoring', type=bool, default=True)
-    parser.add_argument('--use_snippets', type=bool, default=False)
+    parser.add_argument('--use_snippets', type=bool, default=True)
 
     ### Debugging/logging parameters
     parser.add_argument('--logdir', type=str, default='logs')
@@ -72,12 +72,12 @@ def interpret_args():
     parser.add_argument('--state_positional_embeddings', type=bool, default=True)
     parser.add_argument('--positional_embedding_size', type=int, default=50)
 
-    parser.add_argument('--snippet_age_embedding', type=bool, default=False)
+    parser.add_argument('--snippet_age_embedding', type=bool, default=True)
     parser.add_argument('--snippet_age_embedding_size', type=int, default=64)
     parser.add_argument('--max_snippet_age_embedding', type=int, default=4)
     parser.add_argument('--previous_decoder_snippet_encoding', type=bool, default=False)
 
-    parser.add_argument('--discourse_level_lstm', type=bool, default=False)
+    parser.add_argument('--discourse_level_lstm', type=bool, default=True)
 
     ### Training parameters
     parser.add_argument('--batch_size', type=int, default=16)
@@ -92,17 +92,17 @@ def interpret_args():
     parser.add_argument('--initial_learning_rate', type=float, default=0.001)
     parser.add_argument('--learning_rate_ratio', type=float, default=0.8)
 
-    parser.add_argument('--interaction_level', type=bool, default=False)
+    parser.add_argument('--interaction_level', type=bool, default=True)
     parser.add_argument('--reweight_batch', type=bool, default=True)
 
     ### Setting
-    parser.add_argument('--train', type=bool, default=False)
+    parser.add_argument('--train', type=bool, default=True)
 
     parser.add_argument('--evaluate', type=bool, default=True)
     parser.add_argument('--attention', type=bool, default=False)
     parser.add_argument('--save_file', type=str, default="logs/save_30")
     parser.add_argument('--enable_testing', type=bool, default=True)
-    parser.add_argument('--use_predicted_queries', type=bool, default=False)
+    parser.add_argument('--use_predicted_queries', type=bool, default=True)
     parser.add_argument('--evaluate_split', type=str, default='test')
     parser.add_argument('--evaluate_with_gold_forcing', type=bool, default=False)
     parser.add_argument('--eval_maximum_sql_length', type=int, default=300)

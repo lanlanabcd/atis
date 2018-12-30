@@ -90,6 +90,7 @@ def train_epoch_with_interactions(interaction_batches,
     loss_sum = 0.
 
     for i, interaction_batch in enumerate(interaction_batches):
+        print(i)
         assert len(interaction_batch) == 1
         interaction = interaction_batch.items[0]
 
