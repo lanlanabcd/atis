@@ -311,7 +311,7 @@ def evaluate(model, data, params, last_save_file):
                 use_predicted_queries=params.use_predicted_queries,
                 max_generation_length=params.eval_maximum_sql_length,
                 write_results=True,
-                use_gpu=True)
+                use_gpu=True)[0]
         else:
             eval_results = evaluate_using_predicted_queries(
                 examples,
@@ -321,7 +321,7 @@ def evaluate(model, data, params, last_save_file):
                 total_num=atis_data.num_utterances(split),
                 database_username=params.database_username,
                 database_password=params.database_password,
-                database_timeout=params.database_timeout)
+                database_timeout=params.database_timeout)[0]
     else:
         examples = data.get_all_utterances(split)
         eval_results = evaluate_utterance_sample(
@@ -335,7 +335,7 @@ def evaluate(model, data, params, last_save_file):
             database_username=params.database_username,
             database_password=params.database_password,
             database_timeout=params.database_timeout,
-            write_results=True)
+            write_results=True)[0]
 
     for name, value in eval_results.items():
         print("valid gold-passing " + name.name + ":\t" + "%.2f" % value)
