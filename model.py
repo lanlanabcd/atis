@@ -307,7 +307,7 @@ class ATISModel():
 
             # Add positional embeddings if appropriate
             if self.params.state_positional_embeddings:
-                utterance_hidden_states = self._add_positional_embeddings(
+                utterance_hidden_states, flat_sequence = self._add_positional_embeddings(
                     utterance_hidden_states, input_sequences)
 
             # Encode the snippets
@@ -362,7 +362,7 @@ class ATISModel():
 
         # Add positional embeddings if appropriate
         if self.params.state_positional_embeddings:
-            utterance_hidden_states = self._add_positional_embeddings(
+            utterance_hidden_states, flat_sequence = self._add_positional_embeddings(
                 utterance_hidden_states, input_sequences)
 
         # Encode the snippets

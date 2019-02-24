@@ -304,7 +304,7 @@ class InteractionATISModel(ATISModel):
                     username=self.params.database_username,
                     password=self.params.database_password,
                     timeout=self.params.database_timeout):
-                utterance.set_pred_query(
+                utterance.set_predicted_query(
                     interaction.remove_snippets(predicted_sequence))
                 interaction.add_utterance(
                     utterance,

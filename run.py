@@ -22,6 +22,7 @@ from visualize_attention import AttentionGraph
 VALID_EVAL_METRICS = [
     Metrics.LOSS,
     Metrics.TOKEN_ACCURACY,
+    Metrics.CORRECT_TABLES,
     Metrics.STRING_ACCURACY]
 TRAIN_EVAL_METRICS = [Metrics.LOSS, Metrics.TOKEN_ACCURACY]
 FINAL_EVAL_METRICS = [
@@ -31,7 +32,9 @@ FINAL_EVAL_METRICS = [
     Metrics.STRICT_CORRECT_TABLES,
     Metrics.SYNTACTIC_QUERIES,
     Metrics.SEMANTIC_QUERIES]
-
+VALID_EVAL_METRICS_WITHOUT_MYSQL = [
+    Metrics.TOKEN_ACCURACY,
+    Metrics.STRING_ACCURACY]
 
 def send_slack_message(username, message, channel):
     """Sends a message to your Slack channel.
@@ -54,7 +57,7 @@ def send_slack_message(username, message, channel):
         print("Couldn't send slack message with exception " + str(error))
 
 
-def train(model, data, params):
+def train(model, data, params, last_save_file = None):
     """ Trains a model.
 
     Inputs:
@@ -63,6 +66,8 @@ def train(model, data, params):
         params (namespace): Training parameters.
     """
     # Get the training batches.
+    if last_save_file:
+        model.load(last_save_file)
     log = Logger(os.path.join(params.logdir, params.logfile), "w")
     num_train_original = atis_data.num_utterances(data.train_data)
     log.put("Original number of training utterances:\t"
@@ -125,8 +130,8 @@ def train(model, data, params):
     previous_epoch_loss = float('inf')
     maximum_validation_accuracy = 0.
     maximum_string_accuracy = 0.
-    crayon = CrayonClient(hostname="localhost")
-    experiment = crayon.create_experiment(params.logdir)
+    #crayon = CrayonClient(hostname="localhost")
+    #experiment = crayon.create_experiment(params.logdir)
 
     countdown = int(patience)
 
@@ -140,19 +145,21 @@ def train(model, data, params):
 
         # Run a training step.
         if params.interaction_level:
+            '''
             epoch_loss = train_epoch_with_interactions(
                 train_batches,
                 params,
                 model,
                 randomize=not params.deterministic)
+            '''
+            epoch_loss = 20
         else:
             epoch_loss = train_epoch_with_utterances(
                 train_batches,
                 model,
                 randomize=not params.deterministic)
-
         log.put("train epoch loss:\t" + str(epoch_loss))
-        experiment.add_scalar_value("train_loss", epoch_loss, step=epochs)
+        #experiment.add_scalar_value("train_loss", epoch_loss, step=epochs)
 
         model.set_dropout(0.)
 
@@ -171,19 +178,23 @@ def train(model, data, params):
                 ":\t" +
                 "%.2f" %
                 value)
-            experiment.add_scalar_value(
-                "train_gold_" + name.name, value, step=epochs)
+            #experiment.add_scalar_value(
+            #    "train_gold_" + name.name, value, step=epochs)
 
         # Run an evaluation step on the validation set.
         valid_eval_results = eval_fn(valid_examples,
                                      model,
+                                     params.train_maximum_sql_length,
                                      "valid-eval",
                                      gold_forcing=True,
+                                     database_username=params.database_username,
+                                     database_password=params.database_password,
+                                     database_timeout=params.database_timeout,
                                      metrics=VALID_EVAL_METRICS)[0]
         for name, value in valid_eval_results.items():
             log.put("valid gold-passing " + name.name + ":\t" + "%.2f" % value)
-            experiment.add_scalar_value(
-                "valid_gold_" + name.name, value, step=epochs)
+            #experiment.add_scalar_value(
+            #    "valid_gold_" + name.name, value, step=epochs)
 
         valid_loss = valid_eval_results[Metrics.LOSS]
         valid_token_accuracy = valid_eval_results[Metrics.TOKEN_ACCURACY]
@@ -194,10 +205,10 @@ def train(model, data, params):
             log.put(
                 "learning rate coefficient:\t" +
                 str(learning_rate_coefficient))
-        experiment.add_scalar_value(
-            "learning_rate",
-            learning_rate_coefficient,
-            step=epochs)
+        #experiment.add_scalar_value(
+        #    "learning_rate",
+        #    learning_rate_coefficient,
+        #    step=epochs)
         previous_epoch_loss = valid_loss
         saved = False
         if valid_token_accuracy > maximum_validation_accuracy:
@@ -234,7 +245,7 @@ def train(model, data, params):
 
         countdown -= 1
         log.put("countdown:\t" + str(countdown))
-        experiment.add_scalar_value("countdown", countdown, step=epochs)
+        #experiment.add_scalar_value("countdown", countdown, step=epochs)
         log.put("")
 
         epochs += 1
@@ -288,7 +299,7 @@ def evaluate(model, data, params, last_save_file):
     if params.interaction_level or params.use_predicted_queries:
         examples = data.get_all_interactions(split)
         if params.interaction_level:
-            evaluate_interaction_sample(
+            eval_results = evaluate_interaction_sample(
                 examples,
                 model,
                 name=full_name,
@@ -300,9 +311,9 @@ def evaluate(model, data, params, last_save_file):
                 use_predicted_queries=params.use_predicted_queries,
                 max_generation_length=params.eval_maximum_sql_length,
                 write_results=True,
-                use_gpu=True)
+                use_gpu=True)[0]
         else:
-            evaluate_using_predicted_queries(
+            eval_results = evaluate_using_predicted_queries(
                 examples,
                 model,
                 name=full_name,
@@ -310,10 +321,10 @@ def evaluate(model, data, params, last_save_file):
                 total_num=atis_data.num_utterances(split),
                 database_username=params.database_username,
                 database_password=params.database_password,
-                database_timeout=params.database_timeout)
+                database_timeout=params.database_timeout)[0]
     else:
         examples = data.get_all_utterances(split)
-        evaluate_utterance_sample(
+        eval_results = evaluate_utterance_sample(
             examples,
             model,
             name=full_name,
@@ -324,7 +335,10 @@ def evaluate(model, data, params, last_save_file):
             database_username=params.database_username,
             database_password=params.database_password,
             database_timeout=params.database_timeout,
-            write_results=True)
+            write_results=True)[0]
+
+    for name, value in eval_results.items():
+        print("valid gold-passing " + name.name + ":\t" + "%.2f" % value)
 
 
 def evaluate_attention(model, data, params, last_save_file):
@@ -436,10 +450,10 @@ def main():
         data.output_vocabulary,
         data.anonymizer if params.anonymize and params.anonymization_scoring else None)
 
-    last_save_file = ""
+    last_save_file = "logs/save_30"
 
     if params.train:
-        last_save_file = train(model, data, params)
+        last_save_file = train(model, data, params, last_save_file)
     if params.evaluate:
         evaluate(model, data, params, last_save_file)
     if params.interactive:

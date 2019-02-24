@@ -33,7 +33,7 @@ class ATISDataset():
             os.path.join(params.data_directory, params.processed_train_filename),
             params.raw_train_filename,
             int_load_function)
-        if params.train:
+        if params.train or params.evaluate_split == "valid":
             self.valid_data = ds.DatasetSplit(
                 os.path.join(params.data_directory, params.processed_validation_filename),
                 params.raw_validation_filename,

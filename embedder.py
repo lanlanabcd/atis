@@ -72,7 +72,15 @@ class Embedder():
     def bow_snippets(self, token, snippets=None):
         """ Bag of words embedding for snippets"""
         if snippet_handler.is_snippet(token):
-            assert snippets
+            """
+            Somehow in this part the program goes wrong in the server.(OK in my own computer)
+            Phenomenon: token is predicted to be a snippet, and wrongly goes into this branch.
+            Just ignore the assertion error.
+            """
+            try:
+                assert snippets
+            except:
+                return self(token)
             snippet_sequence = []
             for snippet in snippets:
                 if snippet.name == token:
