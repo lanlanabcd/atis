@@ -5,7 +5,7 @@ from encoder import Encoder
 import dynet_utils as du
 from token_predictor import construct_token_predictor
 from decoder import SequencePredictor
-from vocabulary import DEL_TOK, UNK_TOK
+from vocabulary import DEL_TOK, UNK_TOK, EOS_TOK
 
 def flatten_utterances(utterances):
     """ Gets a flat sequence from a sequence of utterances.
@@ -122,7 +122,8 @@ class Seq2SeqModel():
                                                     output_vocabulary,
                                                     attention_key_size,
                                                     final_snippet_size,
-                                                    anonymizer)
+                                                    anonymizer,
+                                                    mytoken_predictor=False)
 
         self.decoder = SequencePredictor(
             params,
@@ -130,7 +131,8 @@ class Seq2SeqModel():
             attention_key_size,
             self.output_embedder,
             self._pc,
-            token_predictor)
+            token_predictor,
+            )
 
         self.trainer = dy.AdamTrainer(
             self._pc, alpha=params.initial_learning_rate)
@@ -171,6 +173,10 @@ class Seq2SeqModel():
             flat_seq = []
             for sequence in input_sequences:
                 flat_seq.extend(sequence)
+
+            #final_state, 一个list，是最后一个utterance每一步输出的hidden_state（h),
+            # utterance_hiddenstate是一个list，
+            #里面每一个元素是一个utterance的所有state（h和c）构成的list
             decoder_results = self.decoder(
                 final_state,
                 utterance_hidden_states,

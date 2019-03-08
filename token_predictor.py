@@ -21,6 +21,7 @@ class TokenPrediction(namedtuple('TokenPrediction',
                                   'aligned_tokens',
                                   'attention_results',
                                   'decoder_state'))):
+#return TokenPrediction(vocab_scores, vocab_tokens, attention_results, decoder_state)
 
     """A token prediction.
 
@@ -127,6 +128,74 @@ class TokenPredictor():
 
         return TokenPrediction(vocab_scores, vocab_tokens, attention_results, decoder_state)
 
+class MyTokenPredictor():
+    """ Predicts a token given a (decoder) state.
+
+        Attributes:
+            vocabulary (Vocabulary): A vocabulary object for the output.
+            attention_module (Attention): An attention module.
+            state_transformation_weights (dy.Parameters): Transforms the input state
+                before predicting a token.
+            vocabulary_weights (dy.Parameters): Final layer weights.
+            vocabulary_biases (dy.Parameters): Final layer biases.
+        """
+
+    def __init__(self, model, params, vocabulary, attention_key_size):
+        self.vocabulary = vocabulary
+        self.attention_module = Attention(model,
+                                          params.decoder_state_size,
+                                          attention_key_size,
+                                          attention_key_size)
+        self.state_transform_weights = du.add_params(
+            model,
+            (params.decoder_state_size +
+             attention_key_size,
+             params.decoder_state_size),
+            "weights-state-transform")
+        self.vocabulary_weights = du.add_params(
+            model, (params.decoder_state_size, len(vocabulary)), "weights-vocabulary")
+        self.vocabulary_biases = du.add_params(model,
+                                               tuple([len(vocabulary)]),
+                                               "biases-vocabulary")
+
+    def _get_intermediate_state(self, state, dropout_amount=0.):
+        intermediate_state = dy.tanh(
+            du.linear_layer(
+                state, self.state_transform_weights))
+        return dy.dropout(intermediate_state, dropout_amount)
+
+    def _score_vocabulary_tokens(self, state):
+        scores = dy.transpose(du.linear_layer(state,
+                                              self.vocabulary_weights,
+                                              self.vocabulary_biases))
+        if scores.dim()[0][0] != len(self.vocabulary.inorder_tokens):
+            raise ValueError("Got " +
+                             str(scores.dim()[0][0]) +
+                             " scores for " +
+                             str(len(self.vocabulary.inorder_tokens)) +
+                             " vocabulary items")
+
+        return scores, self.vocabulary.inorder_tokens
+
+    def __call__(self,
+                 prediction_input,
+                 dropout_amount=0.):
+
+        decoder_state = prediction_input.decoder_state
+        input_hidden_states = prediction_input.input_hidden_states
+
+        attention_results = self.attention_module(decoder_state,
+                                                  input_hidden_states)
+
+        state_and_attn = dy.concatenate(
+            [decoder_state, attention_results.vector])
+
+        intermediate_state = self._get_intermediate_state(
+            state_and_attn, dropout_amount=dropout_amount)
+        vocab_scores, vocab_tokens = self._score_vocabulary_tokens(
+            intermediate_state)
+
+        return TokenPrediction(vocab_scores, vocab_tokens, attention_results, decoder_state)
 
 class SnippetTokenPredictor(TokenPredictor):
     """ Token predictor that also predicts snippets.
@@ -351,7 +420,8 @@ def construct_token_predictor(parameter_collection,
                               vocabulary,
                               attention_key_size,
                               snippet_size,
-                              anonymizer=None):
+                              anonymizer=None,
+                              mytoken_predictor= False):
     """ Constructs a token predictor given the parameters.
 
     Inputs:
@@ -361,6 +431,12 @@ def construct_token_predictor(parameter_collection,
         attention_key_size (int): The size of the attention keys.
         anonymizer (Anonymizer): An anonymization object.
     """
+    if mytoken_predictor:
+        return MyTokenPredictor(parameter_collection,
+                                params,
+                                vocabulary,
+                                attention_key_size)
+
     if params.use_snippets and anonymizer and not params.previous_decoder_snippet_encoding:
         return SnippetAnonymizationTokenPredictor(parameter_collection,
                                                   params,

@@ -9,8 +9,10 @@ import dynet_utils as du
 from token_predictor import PredictionInput
 
 from vocabulary import EOS_TOK, UNK_TOK
+from sql_graph import InteractionGraph
 
 def flatten_distribution(distribution_map, probabilities):
+    #distribution_map记录了键值list， probabilities是概率的list，函数将相同键值合并，概率累加，并返回新的键值list和概率list
     """ Flattens a probability distribution given a map of "unique" values.
         All values in distribution_map with the same value should get the sum
         of the probabilities.
@@ -69,6 +71,7 @@ class SQLPrediction(namedtuple('SQLPrediction',
     def __str__(self):
         return str(self.probability) + "\t" + " ".join(self.sequence)
 
+
 class SequencePredictor():
     """ Predicts a sequence.
 
@@ -89,6 +92,8 @@ class SequencePredictor():
         self.start_token_embedding = du.add_params(model,
                                                    (params.output_embedding_size,),
                                                    "y-0")
+        #修改图
+        self.graph = InteractionGraph(params)
 
     def _initialize_decoder_lstm(self, encoder_state):
         decoder_lstm_states = []
@@ -151,18 +156,26 @@ class SequencePredictor():
                     if index >= len(gold_sequence) - 1:
                         continue_generating = False
                 else:
+                    #prediction.scores，aligned_tokens中每一个单词的选择概率
                     probabilities = np.transpose(dy.softmax(
                         prediction.scores).npvalue()).tolist()[0]
+
+                    # prediction.aligned_tokens 所有备选单词构成的list，有序
                     distribution_map = prediction.aligned_tokens
 
                     # Get a new probabilities and distribution_map consolidating
                     # duplicates
+                    #distribution_map记录了键值list， probabilities是概率的list，函数将相同键值合并，概率累加，并返回新的键值list和概率list
                     distribution_map, probabilities = flatten_distribution(distribution_map,
                                                                            probabilities)
 
                     # Modify the probability distribution so that the UNK token can
                     # never be produced
                     probabilities[distribution_map.index(UNK_TOK)] = 0.
+
+                    #在这里做图的改变
+                    distribution_map, probabilities = self.graph.update_graph(distribution_map, probabilities)
+                    #end
                     argmax_index = int(np.argmax(probabilities))
 
                     argmax_token = distribution_map[argmax_index]
