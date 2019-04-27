@@ -17,7 +17,10 @@ from model import ATISModel
 from model_util import Metrics, evaluate_utterance_sample, evaluate_interaction_sample, \
     train_epoch_with_utterances, train_epoch_with_interactions, evaluate_using_predicted_queries
 from visualize_attention import AttentionGraph
-
+from my_vocab import Vocabulary
+from sql2graph import transfer_dataset
+from state_controler import Controller
+import pickle
 
 VALID_EVAL_METRICS = [
     Metrics.LOSS,
@@ -145,14 +148,11 @@ def train(model, data, params, last_save_file = None):
 
         # Run a training step.
         if params.interaction_level:
-            '''
             epoch_loss = train_epoch_with_interactions(
                 train_batches,
                 params,
                 model,
                 randomize=not params.deterministic)
-            '''
-            epoch_loss = 20
         else:
             epoch_loss = train_epoch_with_utterances(
                 train_batches,
@@ -440,6 +440,16 @@ def main():
 
     # Prepare the dataset into the proper form.
     data = atis_data.ATISDataset(params)
+    tmp_vocab = data.output_vocabulary
+    my_vocab = Vocabulary(params.my_vocab)
+    data.output_vocabulary = my_vocab
+    new_interaction = pickle.load(open("interactions_new", "rb"))
+    data.train_data.examples = new_interaction
+    #transfer_dataset(data.train_data)
+
+    """
+    Newly added for debugging.
+    """
 
     # Construct the model object.
     model_type = InteractionATISModel if params.interaction_level else ATISModel
@@ -450,7 +460,7 @@ def main():
         data.output_vocabulary,
         data.anonymizer if params.anonymize and params.anonymization_scoring else None)
 
-    last_save_file = "logs/save_30"
+    last_save_file = ""
 
     if params.train:
         last_save_file = train(model, data, params, last_save_file)

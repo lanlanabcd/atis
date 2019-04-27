@@ -4,8 +4,8 @@ import pymysql
 from my_vocab import Vocabulary
 import state_controler
 
-operation_list = ['>', '<', '=', '>=', '<=', 'like']
-aggregator_list = ['max', 'count', 'min', 'sum', 'avg']
+operation_list = ['>', '<', '=', '>=', '<=', 'LIKE']
+aggregator_list = ['MAX', 'count', 'MIN', 'SUM', 'AVG']
 
 
 def get_right_bracket(sql):
@@ -74,7 +74,7 @@ def handle_where_clause(head_node, sql_str):
             cur_len = len(cons)
             i = negation_bound
         # conjunction
-        elif word == 'and' or word == 'or':
+        elif word == 'AND' or word == 'OR':
             new_constraint.conjunction = word
         # where column op value
         elif sql_str[i+1] in operation_list:
@@ -87,10 +87,10 @@ def handle_where_clause(head_node, sql_str):
             else:
                 table = None
                 col = sql_str[i]
-            if sql_str[i+2] == 'all':
+            if sql_str[i+2] == 'ALL':
                 op += " all"
                 i += 1
-            elif sql_str[i+2] == 'any':
+            elif sql_str[i+2] == 'ANY':
                 op += " any"
                 i += 1
             if sql_str[i+2] != '(':
@@ -100,14 +100,14 @@ def handle_where_clause(head_node, sql_str):
             # value is a subgraph or something else
             else:
                 index = get_right_bracket(sql_str[i+2:])
-                if sql_str[i+3] != 'select':
+                if sql_str[i+3] != 'SELECT':
                     raise exception("value in a bracket but not a subgraph!")
                 new_node = construct_graph(sql_str[i+3:i+2+index])
                 cons.append(node(table, col, op, new_node))
                 i = i + 2 + index
         # where column between value and value
-        elif sql_str[i+1] == 'between':
-            assert sql_str[i+3] == 'and'
+        elif sql_str[i+1] == 'BETWEEN':
+            assert sql_str[i+3] == 'AND'
             if '.' in sql_str[i]:
                 cons.append(node(sql_str[i].split('.')[0], sql_str[i].split('.')[1], 'between', [sql_str[i+2], \
                                                                                                  sql_str[i+4]]))
@@ -115,16 +115,16 @@ def handle_where_clause(head_node, sql_str):
                 cons.append(node(None, sql_str[i], 'between', [sql_str[i+2], sql_str[i+4]]))
             i += 4
         # where column is not null/is null
-        elif sql_str[i+1] == 'is':
-            if sql_str[i+2] == 'null':
+        elif sql_str[i+1] == 'IS' or sql_str[i+1] == 'is':
+            if sql_str[i+2] == 'NULL':
                 cons.append(node(sql_str[i].split('.')[0], sql_str[i].split('.')[1], 'is null', None))
                 i += 2
             else:
-                assert sql_str[i+2] == 'not' and sql_str[i+3] == 'null'
+                assert sql_str[i+2] == 'NOT NULL'
                 cons.append(node(sql_str[i].split('.')[0], sql_str[i].split('.')[1], 'is not null', None))
-                i += 3
+                i += 2
         # where column in (subgraph)
-        elif sql_str[i+1] == 'in':
+        elif sql_str[i+1] == 'IN':
             assert sql_str[i+2] == '('
             bracket_index = get_right_bracket(sql_str[i+2:])
             new_node = construct_graph(sql_str[i+3:i+2+bracket_index])
@@ -134,19 +134,19 @@ def handle_where_clause(head_node, sql_str):
                 next_negation = False
             cons.append(new_node)
             i = i + 2 + bracket_index
-        elif sql_str[i+1] == 'not':
-            if sql_str[i+2] == 'between' and sql_str[i+4] == 'and':
+        elif sql_str[i+1] == 'NOT':
+            if sql_str[i+2] == 'BETWEEN' and sql_str[i+4] == 'AND':
                 if '.' in sql_str[i]:
                     cons.append(node(sql_str[i].split('.')[0], sql_str[i].split('.')[1], 'not between', [sql_str[i+3], \
                                                                                                  sql_str[i+5]]))
                 else:
                     cons.append(node(None, sql_str[i], 'not between', [sql_str[i+3], sql_str[i+5]]))
                 i += 5
-            elif sql_str[i+2] == 'in':
+            elif sql_str[i+2] == 'IN':
                 next_negation = True
                 # pass the table/column to the next position.
                 sql_str[i+1] = sql_str[i]
-        elif word == 'group' and sql_str[i+1] == 'by':
+        elif word == 'GROUP' and sql_str[i+1] == 'BY':
             head_node.group_by = sql_str[i+2]
             i += 2
         else:
@@ -174,10 +174,10 @@ def construct_graph(sql):
         selecting_column = 1
         while i < len(sql_str):
             word = sql_str[i]
-            if word == 'select':
+            if word == 'SELECT':
                 head_node.create_subgraph = True
                 # select distinct table.column from table
-                if sql_str[i+1] == 'distinct':
+                if sql_str[i+1] == 'DISTINCT':
                     head_node.column = sql_str[i+2].split('.')[1]
                     head_node.table = sql_str[i+2].split('.')[0]
                     head_node.distinct = True
@@ -189,7 +189,7 @@ def construct_graph(sql):
                         if word == ')':
                             record = j
                             break
-                    if sql_str[i+3] == 'distinct':
+                    if sql_str[i+3] == 'DISTINCT':
                         head_node.distinct = True
                         sql_str[i+3] = sql_str[i+4]
                     if '.' in sql_str[i+3]:
@@ -222,18 +222,18 @@ def construct_graph(sql):
                 else:
                     head_node.additional_table.append(sql_str[i+1])
                 i += 2
-            elif word == 'from':
+            elif word == 'FROM':
                 head_node.table = sql_str[i+1]
                 selecting_column = 0
                 i += 2
-            elif word == 'where':
+            elif word == 'WHERE':
                 i += 1
                 new_constraint = handle_where_clause(head_node, sql_str[i:])
                 head_node.constraint = new_constraint
                 break
             # group by table.column
-            elif word == 'group':
-                assert sql_str[i+1] == 'by' and '.' in sql_str[i+2]
+            elif word == 'GROUP':
+                assert sql_str[i+1] == 'BY' and '.' in sql_str[i+2]
                 head_node.group_by = sql_str[i+2]
                 i += 3
             else:
@@ -413,60 +413,92 @@ def recover_entity(sql_list, entities):
     return " ".join(sql_list)
 
 
-if __name__ == '__main__':
+def set_environment(path):
     db = pymysql.connect(user='root', password='mysql12928', database='atis3')
     cursor = db.cursor()
-    data = pickle.load(open("./processed_data/interactions", "rb"))
-    cnt = 0
-    debug = 0
-
-    path = "/Users/mac/PycharmProjects/atis/processed_data/interactions"
+    data = pickle.load(open(path, "rb"))
     vocab = Vocabulary(path)
     controller = state_controler.Controller(vocab)
+    return controller, data, cursor
 
-    for interaction in data:
-        for utterance in interaction:
+
+def convert_to_new_answer(ori_sql):
+    graph = construct_graph(ori_sql)
+    line, new_ans = parse_graph(graph, True)
+    return new_ans
+
+
+def transfer_dataset(dataset, controller = None):
+    for interaction in dataset.examples:
+        for utterance in interaction.utterances:
+            print(utterance.gold_query_to_use)
+            new_ans = convert_to_new_answer(utterance.gold_query_to_use)
+            utterance.gold_query_to_use = new_ans
+            print(new_ans)
+            """
+            if controller:
+                controller.initialize()
+                for token in new_ans:
+                    controller.update(token)
+                if controller.stack:
+                    raise(AssertionError("Error: Stack Not Empty!"))
+            """
+    pickle.dump(dataset.examples, open("interactions_new", "wb"))
+
+
+if __name__ == '__main__':
+    path = "/Users/mac/PycharmProjects/atis/processed_data/interactions"
+    controller, data, cursor = set_environment(path)
+    cnt = 0
+    debug = 0
+    anonym = 1
+    for c1, interaction in enumerate(data):
+        for c2, utterance in enumerate(interaction):
             cnt += 1
             if cnt in [92, 388, 463, 464, 2064, 2277, 3946, 3966, 5565, 5566]:
                 continue
-            if cnt < 3189:
+            if cnt < 0:
                 continue
             if debug:
                 sql = "( SELECT count ( DISTINCT fare_basis_code ) FROM fare_basis WHERE fare_basis.economy = 'YES' ) ;"
                 sql, entity = extract_entity(sql)
                 print(sql)
-            else:
+            elif not anonym:
                 ori_sql = " ".join(utterance.original_gold_query)
                 print(ori_sql)
                 sql, entity = extract_entity(ori_sql)
+                graph = construct_graph(sql.split(' '))
+                line, new_ans = parse_graph(graph, True)
+                line = recover_entity(line.split(' '), entity)
+                tmp = recover_entity(new_ans, entity)
+                print(line)
+                print(utterance.gold_sql_results)
+                print(new_ans)
+                cursor.execute(line)
+                res = list(cursor.fetchall())
+                gold = utterance.gold_sql_results
+                res.sort()
+                gold.sort()
+                print(cnt)
+                if res != gold:
+                    print(res)
+                    cursor.execute(ori_sql)
+                    gold = list(cursor.fetchall())
+                    if res != gold:
+                        raise exception("results doesn't match!")
+                print("=======")
+            else:
+                print("=======")
+                print(cnt)
+                new_ans = convert_to_new_answer(utterance.gold_query_to_use)
+                print(new_ans)
+                data[c1][c2].gold_query_to_use = new_ans
             print(utterance.original_input_seq)
-            graph = construct_graph(sql.lower().split(' '))
-            line, new_ans = parse_graph(graph, True)
-            line = recover_entity(line.split(' '), entity)
-            tmp = recover_entity(new_ans, entity)
-
+            """
             for token in new_ans:
                 controller.update(token)
             if controller.stack:
                 raise(AssertionError("Error: Stack Not Empty!"))
-            controller.stack = []
-            controller.state = 0
-
-            print(line)
-            print(utterance.gold_sql_results)
-            print(new_ans)
-            #if '*' in new_ans:
-            #    exit(0)
-            cursor.execute(line)
-            res = list(cursor.fetchall())
-            gold = utterance.gold_sql_results
-            res.sort()
-            gold.sort()
-            print(cnt)
-            if res != gold:
-                print(res)
-                cursor.execute(ori_sql)
-                gold = list(cursor.fetchall())
-                if res != gold:
-                    raise exception("results doesn't match!")
-            print("=======")
+            controller.initialize()
+            """
+    pickle.dump(data, open("interactions_new", "wb"))

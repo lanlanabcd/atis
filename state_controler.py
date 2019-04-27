@@ -103,7 +103,7 @@ class Controller:
             elif label == 10:
                 self.state = 6
             else:
-                if token != '1':
+                if token != '1' and label != 8:
                     raise(AssertionError("Exception Occurred!"))
                 else:
                     self.state = 7

@@ -1,11 +1,11 @@
 import pymysql
 import pickle
 
-vocab = {'operation_list' : ['>', '<', '=', '>=', '<=', 'like', 'is null', 'is not null', 'between', 'in', 'not between',
+vocab = {'operation_list' : ['>', '<', '=', '>=', '<=', 'LIKE', 'is null', 'is not null', 'between', 'in', 'not between',
                              'not in'],
-'aggregator_list' : ['max', 'count', 'min', 'sum', 'avg'],
+'aggregator_list' : ['MAX', 'count', 'MIN', 'SUM', 'AVG'],
 'key_word' : ['group by', 'distinct'],
-'conjunction' : ['and', 'or'],
+'conjunction' : ['AND', 'OR'],
 'all_any' : ['all', 'any'],
 'functional_word' : ['<C>', '<S>'],
 'end_token': ['<EOT>'],
@@ -59,6 +59,7 @@ class Vocabulary:
                 self.token2label[token] = label
         for i, token in enumerate(self.inorder_tokens):
             self.token2id[token] = i
+        self.tokens = set(self.inorder_tokens)
 
     def __len__(self):
         return len(self.inorder_tokens)
@@ -88,7 +89,7 @@ def collect_anon(interaction_path, tables, columns):
     values = []
     for utterances in interactions:
         for utterance in utterances:
-            for i, word in enumerate(utterance.original_gold_query):
+            for i, word in enumerate(utterance.gold_query_to_use):
                 if "#" in word:
                     anonimizers.append(word)
                 if word in value_indicator:
