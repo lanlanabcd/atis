@@ -135,17 +135,19 @@ def handle_where_clause(head_node, sql_str):
             cons.append(new_node)
             i = i + 2 + bracket_index
         elif sql_str[i+1] == 'NOT':
-            if sql_str[i+2] == 'BETWEEN' and sql_str[i+4] == 'AND':
-                if '.' in sql_str[i]:
-                    cons.append(node(sql_str[i].split('.')[0], sql_str[i].split('.')[1], 'not between', [sql_str[i+3], \
+            assert sql_str[i+2] == 'BETWEEN' and sql_str[i+4] == 'AND'
+            if '.' in sql_str[i]:
+                cons.append(node(sql_str[i].split('.')[0], sql_str[i].split('.')[1], 'not between', [sql_str[i+3], \
                                                                                                  sql_str[i+5]]))
-                else:
-                    cons.append(node(None, sql_str[i], 'not between', [sql_str[i+3], sql_str[i+5]]))
-                i += 5
-            elif sql_str[i+2] == 'IN':
-                next_negation = True
-                # pass the table/column to the next position.
-                sql_str[i+1] = sql_str[i]
+            else:
+                cons.append(node(None, sql_str[i], 'not between', [sql_str[i+3], sql_str[i+5]]))
+            i += 5
+        elif sql_str[i+1] == 'not':
+            assert sql_str[i+2] == 'IN'
+            next_negation = True
+            # pass the table/column to the next position.
+            sql_str[i+1] = sql_str[i]
+
         elif word == 'GROUP' and sql_str[i+1] == 'BY':
             head_node.group_by = sql_str[i+2]
             i += 2
@@ -327,8 +329,11 @@ def handle_additional_col(new_ans, add):
         res = re.findall(agg + "\((.*?)\)", add)
         if res:
             new_ans.append(agg)
-            new_ans.append(res[0].split('.')[0])
-            new_ans.append(res[0].split('.')[1])
+            if '.' in res[0]:
+                new_ans.append(res[0].split('.')[0])
+                new_ans.append(res[0].split('.')[1])
+            else:
+                new_ans.append(res[0])
 
 
 def get_aggregated_col(col, agg):
@@ -352,7 +357,7 @@ def parse_graph(head_node, if_first):
         sql += col_and_table(head_node)[0]
         new_ans.extend(col_and_table(head_node)[1])
         for add in head_node.additional_col:
-            assert '.' in add
+            assert '.' in add or '*' in add
             handle_additional_col(new_ans, add)
         if head_node.additional_col:
             res = get_aggregated_col(head_node.additional_col, head_node.additional_agg)
@@ -443,21 +448,21 @@ def transfer_dataset(dataset, controller = None):
                 if controller.stack:
                     raise(AssertionError("Error: Stack Not Empty!"))
             """
-    pickle.dump(dataset.examples, open("interactions_new", "wb"))
+    pickle.dump(dataset.examples, open("interactions_new_dev", "wb"))
 
 
 if __name__ == '__main__':
-    path = "/Users/mac/PycharmProjects/atis/processed_data/interactions"
+    path = "/Users/mac/PycharmProjects/atis/dev_interactions"
     controller, data, cursor = set_environment(path)
     cnt = 0
     debug = 0
-    anonym = 1
-    for c1, interaction in enumerate(data):
-        for c2, utterance in enumerate(interaction):
+    anonym = 0
+    for c1, interaction in enumerate(data.examples):
+        for c2, utterance in enumerate(interaction.utterances):
             cnt += 1
-            if cnt in [92, 388, 463, 464, 2064, 2277, 3946, 3966, 5565, 5566]:
+            if cnt in [92, 388, 463, 464, 2064, 2277, 3946, 3966, 5565, 5566, 1586, 764, 768, 1894, 1902, 1929, 1930, 1931]:
                 continue
-            if cnt < 0:
+            if cnt < 1894:
                 continue
             if debug:
                 sql = "( SELECT count ( DISTINCT fare_basis_code ) FROM fare_basis WHERE fare_basis.economy = 'YES' ) ;"
@@ -465,14 +470,15 @@ if __name__ == '__main__':
                 print(sql)
             elif not anonym:
                 ori_sql = " ".join(utterance.original_gold_query)
-                print(ori_sql)
-                sql, entity = extract_entity(ori_sql)
-                graph = construct_graph(sql.split(' '))
+                #print(ori_sql)
+                print(utterance.original_gold_query)
+                #sql, entity = extract_entity(ori_sql)
+                graph = construct_graph(utterance.original_gold_query)
                 line, new_ans = parse_graph(graph, True)
-                line = recover_entity(line.split(' '), entity)
-                tmp = recover_entity(new_ans, entity)
+                #line = recover_entity(line.split(' '), entity)
+                #tmp = recover_entity(new_ans, entity)
                 print(line)
-                print(utterance.gold_sql_results)
+                #print(utterance.gold_sql_results)
                 print(new_ans)
                 cursor.execute(line)
                 res = list(cursor.fetchall())
@@ -490,15 +496,14 @@ if __name__ == '__main__':
             else:
                 print("=======")
                 print(cnt)
+                print(utterance.gold_query_to_use)
                 new_ans = convert_to_new_answer(utterance.gold_query_to_use)
                 print(new_ans)
-                data[c1][c2].gold_query_to_use = new_ans
+                utterance.gold_query_to_use = new_ans
             print(utterance.original_input_seq)
-            """
             for token in new_ans:
                 controller.update(token)
             if controller.stack:
                 raise(AssertionError("Error: Stack Not Empty!"))
             controller.initialize()
-            """
     pickle.dump(data, open("interactions_new", "wb"))

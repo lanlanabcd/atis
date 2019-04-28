@@ -190,7 +190,7 @@ def train(model, data, params, last_save_file = None):
                                      database_username=params.database_username,
                                      database_password=params.database_password,
                                      database_timeout=params.database_timeout,
-                                     metrics=VALID_EVAL_METRICS)[0]
+                                     metrics=VALID_EVAL_METRICS_WITHOUT_MYSQL)[0]
         for name, value in valid_eval_results.items():
             log.put("valid gold-passing " + name.name + ":\t" + "%.2f" % value)
             #experiment.add_scalar_value(
@@ -443,12 +443,14 @@ def main():
     tmp_vocab = data.output_vocabulary
     my_vocab = Vocabulary(params.my_vocab)
 
-    #pickle.dump(data.dev_data, open("dev_interactions", "wb"))
+    pickle.dump(my_vocab, open("new_vocab_train", "wb"))
 
     data.output_vocabulary = my_vocab
-    #new_interaction = pickle.load(open("interactions_new", "rb"))
-    #data.dev_data.examples = new_interaction
-    transfer_dataset(data.dev_data)
+    new_interaction = pickle.load(open("interactions_new", "rb"))
+    new_interaction_valid = pickle.load(open("interactions_new_dev", "rb"))
+    data.train_data.examples = new_interaction
+    data.valid_data.examples = new_interaction_valid
+    #transfer_dataset(data.valid_data)
 
     """
     Newly added for debugging.
