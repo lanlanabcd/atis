@@ -442,10 +442,13 @@ def main():
     data = atis_data.ATISDataset(params)
     tmp_vocab = data.output_vocabulary
     my_vocab = Vocabulary(params.my_vocab)
+
+    #pickle.dump(data.dev_data, open("dev_interactions", "wb"))
+
     data.output_vocabulary = my_vocab
-    new_interaction = pickle.load(open("interactions_new", "rb"))
-    data.train_data.examples = new_interaction
-    #transfer_dataset(data.train_data)
+    #new_interaction = pickle.load(open("interactions_new", "rb"))
+    #data.dev_data.examples = new_interaction
+    transfer_dataset(data.dev_data)
 
     """
     Newly added for debugging.
