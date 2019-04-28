@@ -135,13 +135,17 @@ def handle_where_clause(head_node, sql_str):
             cons.append(new_node)
             i = i + 2 + bracket_index
         elif sql_str[i+1] == 'NOT':
-            assert sql_str[i+2] == 'BETWEEN' and sql_str[i+4] == 'AND'
-            if '.' in sql_str[i]:
-                cons.append(node(sql_str[i].split('.')[0], sql_str[i].split('.')[1], 'not between', [sql_str[i+3], \
+            assert (sql_str[i+2] == 'BETWEEN' and sql_str[i+4] == 'AND') or sql_str[i+2] == 'IN'
+            if sql_str[i+2] == 'BETWEEN':
+                if '.' in sql_str[i]:
+                    cons.append(node(sql_str[i].split('.')[0], sql_str[i].split('.')[1], 'not between', [sql_str[i+3], \
                                                                                                  sql_str[i+5]]))
+                else:
+                    cons.append(node(None, sql_str[i], 'not between', [sql_str[i+3], sql_str[i+5]]))
+                i += 5
             else:
-                cons.append(node(None, sql_str[i], 'not between', [sql_str[i+3], sql_str[i+5]]))
-            i += 5
+                next_negation = True
+                sql_str[i+1] = sql_str[i]
         elif sql_str[i+1] == 'not':
             assert sql_str[i+2] == 'IN'
             next_negation = True
@@ -433,7 +437,7 @@ def convert_to_new_answer(ori_sql):
     return new_ans
 
 
-def transfer_dataset(dataset, controller = None):
+def transfer_dataset(dataset, controller=None, name=None):
     for interaction in dataset.examples:
         for utterance in interaction.utterances:
             print(utterance.gold_query_to_use)
@@ -448,7 +452,7 @@ def transfer_dataset(dataset, controller = None):
                 if controller.stack:
                     raise(AssertionError("Error: Stack Not Empty!"))
             """
-    pickle.dump(dataset.examples, open("interactions_new_dev", "wb"))
+    pickle.dump(dataset.examples, open("interactions_new_" + name, "wb"))
 
 
 if __name__ == '__main__':
