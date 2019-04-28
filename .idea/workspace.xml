@@ -3,11 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="5da5afab-f0cc-4fa1-8b50-10c29406a74e" name="Default Changelist" comment="12.28 修正两个BUG">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/interactions_new" beforeDir="false" afterPath="$PROJECT_DIR$/interactions_new" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/logs/log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/logs/log.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/new_vocab_train" beforeDir="false" afterPath="$PROJECT_DIR$/new_vocab_train" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/run.py" beforeDir="false" afterPath="$PROJECT_DIR$/run.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sql2graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/sql2graph.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -20,10 +17,22 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/run.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
-              <caret line="449" column="19" lean-forward="true" selection-start-line="449" selection-start-column="19" selection-end-line="449" selection-end-column="19" />
+            <state relative-caret-position="285">
+              <caret line="453" column="28" selection-start-line="453" selection-start-column="28" selection-end-line="453" selection-end-column="28" />
               <folding>
                 <element signature="e#72#81#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/atis_data.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="281">
+              <caret line="232" lean-forward="true" selection-start-line="232" selection-end-line="232" />
+              <folding>
+                <element signature="e#63#72#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -457,19 +466,20 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1280" height="709" extended-state="0" />
+    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.17553614" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17553614" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49563146" visible="true" weight="0.35818475" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49563146" visible="true" weight="0.35818475" />
       <window_info anchor="bottom" id="Cvs" order="3" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="4" weight="0.4" />
       <window_info anchor="bottom" x="21" y="211" width="1259" height="262" id="Debug" order="5" sideWeight="0.49086577" weight="0.39708266" />
       <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.49960285" weight="0.3273906" />
       <window_info anchor="bottom" id="Version Control" order="7" sideWeight="0.49960285" weight="0.3273906" />
-      <window_info anchor="bottom" id="Terminal" order="8" sideWeight="0.48371723" weight="0.36790925" />
+      <window_info anchor="bottom" id="Terminal" order="8" sideWeight="0.48371723" weight="0.3743922" />
       <window_info anchor="bottom" id="Python Console" order="9" sideWeight="0.49642575" weight="0.37115073" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.50913423" side_tool="true" weight="0.42463532" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -552,7 +562,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/run.py</url>
-          <line>459</line>
+          <line>460</line>
           <option name="timeStamp" value="143" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -786,16 +796,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/atis_data.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="31" column="19" lean-forward="true" selection-start-line="31" selection-start-column="19" selection-end-line="31" selection-end-column="19" />
-          <folding>
-            <element signature="e#63#72#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/atis_vocab.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="15">
@@ -973,10 +973,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/atis_data.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="281">
+          <caret line="232" lean-forward="true" selection-start-line="232" selection-end-line="232" />
+          <folding>
+            <element signature="e#63#72#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/run.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="449" column="19" lean-forward="true" selection-start-line="449" selection-start-column="19" selection-end-line="449" selection-end-column="19" />
+        <state relative-caret-position="285">
+          <caret line="453" column="28" selection-start-line="453" selection-start-column="28" selection-end-line="453" selection-end-column="28" />
           <folding>
             <element signature="e#72#81#0" expanded="true" />
           </folding>

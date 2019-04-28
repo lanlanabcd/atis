@@ -440,17 +440,19 @@ def main():
 
     # Prepare the dataset into the proper form.
     data = atis_data.ATISDataset(params)
-    tmp_vocab = data.output_vocabulary
-    my_vocab = Vocabulary(params.my_vocab)
+    #tmp_vocab = data.output_vocabulary
+    #my_vocab = Vocabulary(params.my_vocab)
 
-    pickle.dump(my_vocab, open("new_vocab_train", "wb"))
+    #pickle.dump(my_vocab, open("new_vocab_train", "wb"))
+    my_vocab = pickle.load(open("new_vocab_train", "rb"))
 
     data.output_vocabulary = my_vocab
-    new_interaction = pickle.load(open("interactions_new", "rb"))
-    new_interaction_valid = pickle.load(open("interactions_new_dev", "rb"))
-    data.train_data.examples = new_interaction
-    data.valid_data.examples = new_interaction_valid
-    #transfer_dataset(data.valid_data)
+    #new_interaction = pickle.load(open("interactions_new", "rb"))
+    #new_interaction_valid = pickle.load(open("interactions_new_valid", "rb"))
+    #data.train_data.examples = new_interaction
+    #data.valid_data.examples = new_interaction_valid
+    transfer_dataset(data.valid_data)
+    transfer_dataset(data.train_data)
 
     """
     Newly added for debugging.
