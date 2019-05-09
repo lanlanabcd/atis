@@ -444,7 +444,7 @@ def main():
     # Prepare the dataset into the proper form.
     data = atis_data.ATISDataset(params)
     #tmp_vocab = data.output_vocabulary
-    my_vocab = Vocabulary(params.my_vocab)
+    my_vocab = Vocabulary(params.interaction_train, params.interaction_dev)
 
     pickle.dump(my_vocab, open("new_vocab_train", "wb"))
     #my_vocab = pickle.load(open("new_vocab_train", "rb"))

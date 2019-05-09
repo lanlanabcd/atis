@@ -33,12 +33,12 @@ def value_wash(vocab):
 
 
 class Vocabulary:
-    def __init__(self, path):
+    def __init__(self, path1, path2):
         table_dict, columns = generate_table_and_column()
         print(table_dict)
         print(columns)
         print(set(columns) & set(table_dict.keys()))
-        anonymize, values = collect_anon(path, table_dict.keys(), columns)
+        anonymize, values = collect_anon(path1, path2, table_dict.keys(), columns)
         vocab["value"] = values
         vocab["anon_symbol"] = anonymize
         vocab["column"] = columns
@@ -85,12 +85,12 @@ class Vocabulary:
         return self.token2label[token]
 
 
-def collect_anon(interaction_path, tables, columns):
-    interactions = pickle.load(open(interaction_path, "rb"))
+def collect_anon(train_path, dev_path, tables, columns):
     anonimizers = []
     values = []
-    for utterances in interactions:
-        for utterance in utterances:
+    interactions = pickle.load(open(train_path, "rb"))
+    for utterances in interactions.examples:
+        for utterance in utterances.utterances:
             for i, word in enumerate(utterance.gold_query_to_use):
                 if "#" in word:
                     anonimizers.append(word)
@@ -105,6 +105,16 @@ def collect_anon(interaction_path, tables, columns):
                         if not (token.split('.')[0] in tables and token.split('.')[1] in columns):
                             values.append(token)
                     """
+    interactions = pickle.load(open(dev_path, "rb"))
+    for utterances in interactions.examples:
+        for utterance in utterances.utterances:
+            for i, word in enumerate(utterance.gold_query_to_use):
+                if "#" in word:
+                    anonimizers.append(word)
+                if word in value_indicator:
+                    token = utterance.original_gold_query[i+1]
+                    if token != '(':
+                        values.append(token)
     values = set(values) - set(anonimizers)
     print(values)
     return list(set(anonimizers)), list(set(values))
@@ -134,7 +144,8 @@ def generate_table_and_column():
 
 if __name__ == "__main__":
     path = "/Users/mac/PycharmProjects/atis/processed_data/interactions"
-    output_vocab = Vocabulary(path)
+    ppath = "/Users/mac/PycharmProjects/atis/dev_interactions"
+    output_vocab = Vocabulary(ppath)
     print(len(output_vocab))
     print(output_vocab.id2label)
     print(output_vocab.get_index_by_id_list([0, 1, 10]))

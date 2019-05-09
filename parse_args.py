@@ -116,7 +116,8 @@ def interpret_args():
     parser.add_argument('--database_password', type=str, default="mysql12928")
     parser.add_argument('--database_timeout', type=int, default=2)
     parser.add_argument('--model_level', type=int, default=0)
-    parser.add_argument('--my_vocab', type=str, default="processed_data/interactions")
+    parser.add_argument('--interaction_train', type=str, default="train_interactions")
+    parser.add_argument('--interaction_dev', type=str, default="dev_interactions")
 
     args = parser.parse_args()
 

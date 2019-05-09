@@ -5,12 +5,11 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/decoder.py" beforeDir="false" afterPath="$PROJECT_DIR$/decoder.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/logs/args.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/args.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/model.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/my_vocab.py" beforeDir="false" afterPath="$PROJECT_DIR$/my_vocab.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/new_vocab_train" beforeDir="false" afterPath="$PROJECT_DIR$/new_vocab_train" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/parse_args.py" beforeDir="false" afterPath="$PROJECT_DIR$/parse_args.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/run.py" beforeDir="false" afterPath="$PROJECT_DIR$/run.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/state_controler.py" beforeDir="false" afterPath="$PROJECT_DIR$/state_controler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/token_predictor.py" beforeDir="false" afterPath="$PROJECT_DIR$/token_predictor.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -20,11 +19,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/run.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="161">
-              <caret line="446" column="4" selection-start-line="446" selection-start-column="4" selection-end-line="446" selection-end-column="4" />
+            <state relative-caret-position="213">
+              <caret line="446" column="58" selection-start-line="446" selection-start-column="58" selection-end-line="446" selection-end-column="58" />
               <folding>
                 <element signature="e#72#81#0" expanded="true" />
               </folding>
@@ -33,10 +32,22 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/parse_args.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="227">
+              <caret line="118" column="66" selection-start-line="118" selection-start-column="66" selection-end-line="118" selection-end-column="66" />
+              <folding>
+                <element signature="e#0#10#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/sql2graph.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="7534">
-              <caret line="503" column="41" selection-start-line="503" selection-start-column="41" selection-end-line="503" selection-end-column="41" />
+            <state relative-caret-position="315">
+              <caret line="454" column="40" selection-start-line="454" selection-start-column="40" selection-end-line="454" selection-end-column="40" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -71,8 +82,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/decoder.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="185">
-              <caret line="114" selection-start-line="114" selection-end-line="114" />
+            <state relative-caret-position="222">
+              <caret line="149" column="58" selection-start-line="149" selection-start-column="58" selection-end-line="149" selection-end-column="58" />
               <folding>
                 <element signature="e#48#82#0" expanded="true" />
               </folding>
@@ -93,10 +104,22 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/embedder.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="645">
+              <caret line="43" column="30" selection-start-line="43" selection-start-column="30" selection-end-line="43" selection-end-column="30" />
+              <folding>
+                <element signature="e#30#48#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/state_controler.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="151">
-              <caret line="16" column="37" selection-start-line="16" selection-start-column="37" selection-end-line="16" selection-end-column="37" />
+            <state relative-caret-position="139">
+              <caret line="210" column="60" selection-start-line="210" selection-start-column="60" selection-end-line="210" selection-end-column="60" />
               <folding>
                 <element signature="e#0#31#0" expanded="true" />
               </folding>
@@ -104,25 +127,13 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/my_vocab.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="253">
-              <caret line="63" column="26" selection-start-line="63" selection-start-column="26" selection-end-line="63" selection-end-column="26" />
+            <state relative-caret-position="-293">
+              <caret line="107" column="36" selection-start-line="107" selection-start-column="36" selection-end-line="107" selection-end-column="36" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/model_util.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="204">
-              <caret line="232" column="27" lean-forward="true" selection-start-line="232" selection-start-column="27" selection-end-line="232" selection-end-column="27" />
-              <folding>
-                <element signature="e#54#75#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -190,13 +201,13 @@
         <option value="$PROJECT_DIR$/atis_data.py" />
         <option value="$PROJECT_DIR$/embedder.py" />
         <option value="$PROJECT_DIR$/sql2graph.py" />
-        <option value="$PROJECT_DIR$/parse_args.py" />
-        <option value="$PROJECT_DIR$/decoder.py" />
         <option value="$PROJECT_DIR$/model.py" />
         <option value="$PROJECT_DIR$/token_predictor.py" />
+        <option value="$PROJECT_DIR$/decoder.py" />
         <option value="$PROJECT_DIR$/state_controler.py" />
-        <option value="$PROJECT_DIR$/my_vocab.py" />
+        <option value="$PROJECT_DIR$/parse_args.py" />
         <option value="$PROJECT_DIR$/run.py" />
+        <option value="$PROJECT_DIR$/my_vocab.py" />
       </list>
     </option>
   </component>
@@ -470,18 +481,18 @@
     <frame x="0" y="23" width="1280" height="709" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17553614" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.17553614" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49563146" visible="true" weight="0.35818475" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49563146" visible="true" weight="0.35818475" />
       <window_info anchor="bottom" id="Cvs" order="3" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="4" weight="0.4" />
       <window_info anchor="bottom" x="21" y="211" width="1259" height="262" id="Debug" order="5" sideWeight="0.49086577" weight="0.39708266" />
       <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.49960285" weight="0.3273906" />
       <window_info anchor="bottom" id="Version Control" order="7" sideWeight="0.49960285" weight="0.3273906" />
-      <window_info anchor="bottom" id="Terminal" order="8" sideWeight="0.48371723" weight="0.2706645" />
+      <window_info anchor="bottom" id="Terminal" order="8" sideWeight="0.48371723" weight="0.29011345" />
       <window_info anchor="bottom" id="Python Console" order="9" sideWeight="0.49642575" weight="0.25283632" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.50913423" side_tool="true" weight="0.42463532" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -859,26 +870,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/parse_args.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2010">
-          <caret line="135" column="19" selection-start-line="135" selection-start-column="19" selection-end-line="135" selection-end-column="19" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/embedder.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1395">
-          <caret line="95" selection-start-line="95" selection-end-line="95" />
-          <folding>
-            <element signature="e#30#48#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/dynet_utils.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="779">
@@ -930,22 +921,72 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/sql2graph.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7534">
-          <caret line="503" column="41" selection-start-line="503" selection-start-column="41" selection-end-line="503" selection-end-column="41" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="285">
           <caret line="324" column="19" selection-start-line="324" selection-start-column="19" selection-end-line="324" selection-end-column="19" />
           <folding>
             <element signature="e#59#77#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/embedder.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="645">
+          <caret line="43" column="30" selection-start-line="43" selection-start-column="30" selection-end-line="43" selection-end-column="30" />
+          <folding>
+            <element signature="e#30#48#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/decoder.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="222">
+          <caret line="149" column="58" selection-start-line="149" selection-start-column="58" selection-end-line="149" selection-end-column="58" />
+          <folding>
+            <element signature="e#48#82#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/state_controler.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="139">
+          <caret line="210" column="60" selection-start-line="210" selection-start-column="60" selection-end-line="210" selection-end-column="60" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sql2graph.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="454" column="40" selection-start-line="454" selection-start-column="40" selection-end-line="454" selection-end-column="40" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/run.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="213">
+          <caret line="446" column="58" selection-start-line="446" selection-start-column="58" selection-end-line="446" selection-end-column="58" />
+          <folding>
+            <element signature="e#72#81#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/parse_args.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="227">
+          <caret line="118" column="66" selection-start-line="118" selection-start-column="66" selection-end-line="118" selection-end-column="66" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -960,42 +1001,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/decoder.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="185">
-          <caret line="114" selection-start-line="114" selection-end-line="114" />
-          <folding>
-            <element signature="e#48#82#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/state_controler.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="151">
-          <caret line="16" column="37" selection-start-line="16" selection-start-column="37" selection-end-line="16" selection-end-column="37" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/my_vocab.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="253">
-          <caret line="63" column="26" selection-start-line="63" selection-start-column="26" selection-end-line="63" selection-end-column="26" />
+        <state relative-caret-position="-293">
+          <caret line="107" column="36" selection-start-line="107" selection-start-column="36" selection-end-line="107" selection-end-column="36" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/run.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="161">
-          <caret line="446" column="4" selection-start-line="446" selection-start-column="4" selection-end-line="446" selection-end-column="4" />
-          <folding>
-            <element signature="e#72#81#0" expanded="true" />
           </folding>
         </state>
       </provider>
