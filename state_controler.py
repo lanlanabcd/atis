@@ -1,11 +1,13 @@
 from my_vocab import Vocabulary
 import sql2graph
+import numpy as np
 
 END = -1
 id2label = {0: 'operation_list', 1: 'aggregator_list', 2: 'key_word', 3: 'conjunction', 4: 'all_any', 5: 'functional_word',
-            6: 'unknown_token', 7: 'value', 8: 'anon_symbol', 9: 'column', 10: 'table', 11: 'neg', 12: 'bracket', 13: 'end_token'}
+            6: 'unknown_token', 7: 'value', 8: 'anon_symbol', 9: 'column', 10: 'table', 11: 'neg', 12: 'bracket', 13: 'end_token',
+            14: 'eos'}
 mask_dict = {0: [1, 2, 10], 1: [10], 2: [9], 3: [1, 5, 10], 4: [10, 11, 12], 5: [5], 6: [9], 7: [0], 8: [7, 8, 5, 4, 10],
-             9: [2, 3, 13], 10: [9], 11: [5], 12: [10], 13: [9], 14: [7, 8], 15: [7, 8]}
+             9: [2, 3, 13], 10: [9], 11: [5], 12: [10], 13: [9], 14: [7, 8], 15: [7, 8], -1: [14]}
 
 test = ['distinct', 'flight', 'flight_id', '<C>', '<C>', 'flight', 'departure_time', '=', '<S>', 'min', 'flight', 'departure_time', '<C>', '<C>', 'flight', 'from_airport', 'in', '<S>', 'airport_service', 'airport_code', '<C>', 'airport_service', 'city_code', 'in', '<S>', 'city', 'city_code', '<C>', 'city', 'city_name', '=', "\\'BOSTON\\'", '<EOT>', '<EOT>', '<EOT>', '<EOT>', '<EOT>', 'and', '<C>', 'flight', 'to_airport', 'in', '<S>', 'airport_service', 'airport_code', '<C>', 'airport_service', 'city_code', 'in', '<S>', 'city', 'city_code', '<C>', 'city', 'city_name', '=', "'ATLANTA'", '<EOT>', '<EOT>', '<EOT>', '<EOT>', '<EOT>', '<EOT>', '<EOT>', '<EOT>', 'and', '<C>', '<C>', 'flight', 'from_airport', 'in', '<S>', 'airport_service', 'airport_code', '<C>', 'airport_service', 'city_code', 'in', '<S>', 'city', 'city_code', '<C>', 'city', 'city_name', '=', "'BOSTON'", '<EOT>', '<EOT>', '<EOT>', '<EOT>', '<EOT>', 'and', '<C>', 'flight', 'to_airport', 'in', '<S>', 'airport_service', 'airport_code', '<C>', 'airport_service', 'city_code', 'in', '<S>', 'city', 'city_code', '<C>', 'city', 'city_name', '=', "'ATLANTA'", '<EOT>', '<EOT>', '<EOT>', '<EOT>', '<EOT>', '<EOT>', '<EOT>', '<EOT>']
 
@@ -24,12 +26,20 @@ class Controller:
         self.state = 0
 
     def mask(self):
-        return self.vocab.get_index_by_id_list(mask_dict[self.state])
+        valid_list = self.vocab.get_index_by_id_list(mask_dict[self.state])
+        """
+        for num in valid_list:
+            print(self.vocab.inorder_tokens[num])
+        """
+        res = np.zeros(len(self.vocab))
+        for num in valid_list:
+            res[num] += 1
+        return np.reshape(res, [-1, 1])
 
     def update(self, token):
-        print("state: ", self.state)
         label = self.vocab.label2id[self.vocab.token_to_label(token)]
-        print(token, label)
+        #print("state: ", self.state)
+        #print(token, label)
         # initial state, key words, columns & aggregators are allowed
         if self.state == 0:
             # eg: select [ max ] -> table
@@ -194,15 +204,15 @@ class Controller:
             assert label == 13
             self.state = END
         elif self.state == END:
-            raise(AssertionError("END Reached but still Updating!"))
+            assert label == 14
 
 
 if __name__ == "__main__":
     path = "/Users/mac/PycharmProjects/atis/processed_data/interactions"
     vocab = Vocabulary(path)
     controller = Controller(vocab)
-    for token in test:
-        controller.update(token)
+    controller.initialize()
+    print(controller.mask())
 
 
 

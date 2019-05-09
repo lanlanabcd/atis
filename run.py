@@ -37,6 +37,7 @@ FINAL_EVAL_METRICS = [
     Metrics.SEMANTIC_QUERIES]
 VALID_EVAL_METRICS_WITHOUT_MYSQL = [
     Metrics.TOKEN_ACCURACY,
+    Metrics.LOSS,
     Metrics.STRING_ACCURACY]
 
 def send_slack_message(username, message, channel):
@@ -169,7 +170,8 @@ def train(model, data, params, last_save_file = None):
                                      params.train_maximum_sql_length,
                                      "train-eval",
                                      gold_forcing=True,
-                                     metrics=TRAIN_EVAL_METRICS)[0]
+                                     metrics=TRAIN_EVAL_METRICS,
+                                     write_results=True)[0]
 
         for name, value in train_eval_results.items():
             log.put(
@@ -190,7 +192,8 @@ def train(model, data, params, last_save_file = None):
                                      database_username=params.database_username,
                                      database_password=params.database_password,
                                      database_timeout=params.database_timeout,
-                                     metrics=VALID_EVAL_METRICS_WITHOUT_MYSQL)[0]
+                                     metrics=VALID_EVAL_METRICS_WITHOUT_MYSQL,
+                                     write_results=True)[0]
         for name, value in valid_eval_results.items():
             log.put("valid gold-passing " + name.name + ":\t" + "%.2f" % value)
             #experiment.add_scalar_value(
@@ -441,15 +444,16 @@ def main():
     # Prepare the dataset into the proper form.
     data = atis_data.ATISDataset(params)
     #tmp_vocab = data.output_vocabulary
-    #my_vocab = Vocabulary(params.my_vocab)
+    my_vocab = Vocabulary(params.my_vocab)
 
-    #pickle.dump(my_vocab, open("new_vocab_train", "wb"))
-    my_vocab = pickle.load(open("new_vocab_train", "rb"))
+    pickle.dump(my_vocab, open("new_vocab_train", "wb"))
+    #my_vocab = pickle.load(open("new_vocab_train", "rb"))
+    print(my_vocab.id2label)
 
     data.output_vocabulary = my_vocab
     new_interaction_train = pickle.load(open("interactions_new_train", "rb"))
     new_interaction_valid = pickle.load(open("interactions_new_valid", "rb"))
-    data.train_data = new_interaction_train
+    data.train_data.examples = new_interaction_train
     data.valid_data.examples = new_interaction_valid
     #transfer_dataset(data.valid_data, name="valid")
     #transfer_dataset(data.train_data, name="train")

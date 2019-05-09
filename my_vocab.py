@@ -11,10 +11,11 @@ vocab = {'operation_list' : ['>', '<', '=', '>=', '<=', 'LIKE', 'is null', 'is n
 'end_token': ['<EOT>'],
 'unknown_token' : ['_UNK'],
 'neg' : ['not'],
-'bracket': ['(']}
+'bracket': ['('],
+'eos': ['_EOS']}
 
 inorder_label_list = ['operation_list', 'aggregator_list', 'key_word', 'conjunction', 'all_any', 'functional_word',
-                      'unknown_token', 'value', 'anon_symbol', 'column', 'table', 'neg', 'bracket', 'end_token']
+                      'unknown_token', 'value', 'anon_symbol', 'column', 'table', 'neg', 'bracket', 'end_token', 'eos']
 
 value_indicator = ['>', '<', '=', '>=', '<=', 'LIKE', 'BETWEEN', 'AND']
 
@@ -60,6 +61,7 @@ class Vocabulary:
         for i, token in enumerate(self.inorder_tokens):
             self.token2id[token] = i
         self.tokens = set(self.inorder_tokens)
+        print(self.id2label)
 
     def __len__(self):
         return len(self.inorder_tokens)

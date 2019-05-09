@@ -9,6 +9,7 @@ from decoder import SequencePredictor
 from encoder import Encoder
 from embedder import Embedder
 from token_predictor import construct_token_predictor
+from state_controler import Controller
 
 
 def get_token_indices(token, index_to_token):
@@ -84,6 +85,7 @@ class ATISModel():
 
         self._pc = dy.ParameterCollection()
 
+        self.controller = Controller(output_vocabulary)
         # Create the input embeddings
         self.input_embedder = Embedder(self._pc,
                                        params.input_embedding_size,
@@ -297,6 +299,7 @@ class ATISModel():
 
         batch.start()
         while not batch.done():
+            # 每个batch是16个interactions,每个interaction是不定数目utterances的集合
             example = batch.next()
 
             # First, encode the input sequences.
@@ -326,7 +329,8 @@ class ATISModel():
                 snippets=snippets,
                 gold_sequence=example.gold_query(),
                 dropout_amount=self.dropout,
-                input_sequence=flat_seq)
+                input_sequence=flat_seq,
+                controller=self.controller)
             all_scores = [
                 step.scores for step in decoder_results.predictions]
             all_alignments = [
@@ -381,7 +385,8 @@ class ATISModel():
             snippets=snippets,
             gold_sequence=example.gold_query() if feed_gold_query else None,
             dropout_amount=self.dropout,
-            input_sequence=flat_seq)
+            input_sequence=flat_seq,
+            controller=self.controller)
 
         all_scores = [
             step.scores for step in decoder_results.predictions]

@@ -240,7 +240,8 @@ class AnonymizationTokenPredictor(TokenPredictor):
 
     def __call__(self,
                  prediction_input,
-                 dropout_amount=0.):
+                 dropout_amount=0.,
+                 controller=None):
         decoder_state = prediction_input.decoder_state
         input_hidden_states = prediction_input.input_hidden_states
         input_sequence = prediction_input.input_sequence
@@ -256,6 +257,16 @@ class AnonymizationTokenPredictor(TokenPredictor):
             state_and_attn, dropout_amount=dropout_amount)
         vocab_scores, vocab_tokens = self._score_vocabulary_tokens(
             intermediate_state)
+
+        if controller:
+            mask = dy.inputTensor(controller.mask())
+            try:
+                assert mask.dim() == vocab_scores.dim()
+            except:
+                print(mask.dim())
+                print(vocab_scores.dim())
+                exit(0)
+            vocab_scores = dy.cmult(vocab_scores, mask)
 
         final_scores = vocab_scores
         aligned_tokens = []

@@ -109,7 +109,8 @@ class SequencePredictor():
                  snippets=None,
                  gold_sequence=None,
                  input_sequence=None,
-                 dropout_amount=0.):
+                 dropout_amount=0.,
+                 controller=None):
         """ Generates a sequence. """
         index = 0
 
@@ -127,6 +128,8 @@ class SequencePredictor():
                                         dy.zeroes((context_vector_size,))])
 
         continue_generating = True
+        if controller:
+            controller.initialize()
 
         while continue_generating:
             if len(sequence) == 0 or sequence[-1] != EOS_TOK:
@@ -137,7 +140,8 @@ class SequencePredictor():
                                                    snippets=snippets,
                                                    input_sequence=input_sequence)
                 prediction = self.token_predictor(prediction_input,
-                                                  dropout_amount=dropout_amount)
+                                                  dropout_amount=dropout_amount,
+                                                  controller=controller)
 
                 predictions.append(prediction)
 
@@ -147,6 +151,8 @@ class SequencePredictor():
                                                            snippets),
                          prediction.attention_results.vector])
                     sequence.append(gold_sequence[index])
+                    if controller:
+                        controller.update(gold_sequence[index])
 
                     if index >= len(gold_sequence) - 1:
                         continue_generating = False
