@@ -161,9 +161,8 @@ def train(model, data, params, last_save_file = None):
                 randomize=not params.deterministic)
         log.put("train epoch loss:\t" + str(epoch_loss))
         #experiment.add_scalar_value("train_loss", epoch_loss, step=epochs)
-        """
         model.set_dropout(0.)
-
+        """
         # Run an evaluation step on a sample of the training data.
         train_eval_results = eval_fn(training_sample,
                                      model,
@@ -182,6 +181,8 @@ def train(model, data, params, last_save_file = None):
                 value)
             #experiment.add_scalar_value(
             #    "train_gold_" + name.name, value, step=epochs)
+
+
 
         # Run an evaluation step on the validation set.
         valid_eval_results = eval_fn(valid_examples,
@@ -443,12 +444,12 @@ def main():
 
     # Prepare the dataset into the proper form.
     data = atis_data.ATISDataset(params)
-    #tmp_vocab = data.output_vocabulary
-    my_vocab = Vocabulary(params.interaction_train, params.interaction_dev)
+    #my_vocab = Vocabulary(params.interaction_train, params.interaction_valid)
 
-    pickle.dump(my_vocab, open("new_vocab_train", "wb"))
-    #my_vocab = pickle.load(open("new_vocab_train", "rb"))
+    #pickle.dump(my_vocab, open("new_vocab_train", "wb"))
+    my_vocab = pickle.load(open("new_vocab_train", "rb"))
     print(my_vocab.id2label)
+    print(len(my_vocab))
 
     data.output_vocabulary = my_vocab
     new_interaction_train = pickle.load(open("interactions_new_train", "rb"))

@@ -117,7 +117,7 @@ def interpret_args():
     parser.add_argument('--database_timeout', type=int, default=2)
     parser.add_argument('--model_level', type=int, default=0)
     parser.add_argument('--interaction_train', type=str, default="train_interactions")
-    parser.add_argument('--interaction_dev', type=str, default="dev_interactions")
+    parser.add_argument('--interaction_valid', type=str, default="valid_interactions")
 
     args = parser.parse_args()
 

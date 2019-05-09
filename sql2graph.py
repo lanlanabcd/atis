@@ -440,10 +440,14 @@ def convert_to_new_answer(ori_sql):
 def transfer_dataset(dataset, controller=None, name=None):
     for interaction in dataset.examples:
         for utterance in interaction.utterances:
-            print(utterance.gold_query_to_use)
+            #print(utterance.gold_query_to_use)
             new_ans = convert_to_new_answer(utterance.gold_query_to_use)
+            #print(new_ans)
+            if "'CO'" in new_ans:
+                print(utterance.gold_query_to_use)
+                print(new_ans)
+                a = input()
             utterance.gold_query_to_use = new_ans
-            print(new_ans)
             """
             if controller:
                 controller.initialize()

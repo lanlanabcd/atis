@@ -95,7 +95,7 @@ def collect_anon(train_path, dev_path, tables, columns):
                 if "#" in word:
                     anonimizers.append(word)
                 if word in value_indicator:
-                    token = utterance.original_gold_query[i+1]
+                    token = utterance.gold_query_to_use[i+1]
                     if token != '(':
                         values.append(token)
                     """
@@ -109,10 +109,12 @@ def collect_anon(train_path, dev_path, tables, columns):
     for utterances in interactions.examples:
         for utterance in utterances.utterances:
             for i, word in enumerate(utterance.gold_query_to_use):
+                if word == "'CO'":
+                    p = input("FOUND. CONTINUE?")
                 if "#" in word:
                     anonimizers.append(word)
                 if word in value_indicator:
-                    token = utterance.original_gold_query[i+1]
+                    token = utterance.gold_query_to_use[i+1]
                     if token != '(':
                         values.append(token)
     values = set(values) - set(anonimizers)

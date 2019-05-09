@@ -38,8 +38,8 @@ class Controller:
 
     def update(self, token):
         label = self.vocab.label2id[self.vocab.token_to_label(token)]
-        #print("state: ", self.state)
-        #print(token, label)
+        print("state: ", self.state)
+        print(token, label)
         # initial state, key words, columns & aggregators are allowed
         if self.state == 0:
             # eg: select [ max ] -> table
