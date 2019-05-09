@@ -146,7 +146,7 @@ def train(model, data, params, last_save_file = None):
         model.set_learning_rate(
             learning_rate_coefficient *
             params.initial_learning_rate)
-
+        """
         # Run a training step.
         if params.interaction_level:
             epoch_loss = train_epoch_with_interactions(
@@ -161,7 +161,7 @@ def train(model, data, params, last_save_file = None):
                 randomize=not params.deterministic)
         log.put("train epoch loss:\t" + str(epoch_loss))
         #experiment.add_scalar_value("train_loss", epoch_loss, step=epochs)
-
+        """
         model.set_dropout(0.)
 
         # Run an evaluation step on a sample of the training data.

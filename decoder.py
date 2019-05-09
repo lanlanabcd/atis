@@ -154,6 +154,8 @@ class SequencePredictor():
                     if controller:
                         controller.update(gold_sequence[index])
 
+                    if index >= len(gold_sequence) - 1:
+                        continue_generating = False
                 else:
                     probabilities = np.transpose(dy.softmax(
                         prediction.scores).npvalue()).tolist()[0]

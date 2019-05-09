@@ -37,7 +37,7 @@ def write_prediction(fileptr,
         correct_string = " ".join(flat_prediction) in [
             " ".join(q) for q in flat_gold_queries]
         pred_obj["correct_string"] = correct_string
-
+        """
         # Database metrics
         if not correct_string:
             syntactic, semantic, pred_table = sql_util.execution_results(
@@ -76,7 +76,6 @@ def write_prediction(fileptr,
             best_prec = 1.
             best_rec = 1.
             best_f1 = 1.
-
         assert best_prec <= 1.
         assert best_rec <= 1.
         assert best_f1 <= 1.
@@ -89,6 +88,7 @@ def write_prediction(fileptr,
         pred_obj["table_prec"] = best_prec
         pred_obj["table_rec"] = best_rec
         pred_obj["table_f1"] = best_f1
+        """
 
 #  pprint.pprint(pred_obj)
 
