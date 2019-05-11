@@ -146,7 +146,6 @@ def train(model, data, params, last_save_file = None):
         model.set_learning_rate(
             learning_rate_coefficient *
             params.initial_learning_rate)
-        """
         # Run a training step.
         if params.interaction_level:
             epoch_loss = train_epoch_with_interactions(
@@ -162,7 +161,6 @@ def train(model, data, params, last_save_file = None):
         log.put("train epoch loss:\t" + str(epoch_loss))
         #experiment.add_scalar_value("train_loss", epoch_loss, step=epochs)
         model.set_dropout(0.)
-        """
         # Run an evaluation step on a sample of the training data.
         train_eval_results = eval_fn(training_sample,
                                      model,
@@ -189,7 +187,7 @@ def train(model, data, params, last_save_file = None):
                                      model,
                                      params.train_maximum_sql_length,
                                      "valid-eval",
-                                     gold_forcing=True,
+                                     gold_forcing=False,
                                      database_username=params.database_username,
                                      database_password=params.database_password,
                                      database_timeout=params.database_timeout,
@@ -199,6 +197,8 @@ def train(model, data, params, last_save_file = None):
             log.put("valid gold-passing " + name.name + ":\t" + "%.2f" % value)
             #experiment.add_scalar_value(
             #    "valid_gold_" + name.name, value, step=epochs)
+
+        exit(0)
 
         valid_loss = valid_eval_results[Metrics.LOSS]
         valid_token_accuracy = valid_eval_results[Metrics.TOKEN_ACCURACY]
@@ -444,20 +444,21 @@ def main():
 
     # Prepare the dataset into the proper form.
     data = atis_data.ATISDataset(params)
-    #my_vocab = Vocabulary(params.interaction_train, params.interaction_valid)
+    if params.new_version:
+        #my_vocab = Vocabulary(params.interaction_train, params.interaction_valid)
 
-    #pickle.dump(my_vocab, open("new_vocab_train", "wb"))
-    my_vocab = pickle.load(open("new_vocab_train", "rb"))
-    print(my_vocab.id2label)
-    print(len(my_vocab))
+        #pickle.dump(my_vocab, open("new_vocab_train", "wb"))
+        my_vocab = pickle.load(open("new_vocab_train", "rb"))
+        print(my_vocab.id2label)
+        print(len(my_vocab))
 
-    data.output_vocabulary = my_vocab
-    new_interaction_train = pickle.load(open("interactions_new_train", "rb"))
-    new_interaction_valid = pickle.load(open("interactions_new_valid", "rb"))
-    data.train_data.examples = new_interaction_train
-    data.valid_data.examples = new_interaction_valid
-    #transfer_dataset(data.valid_data, name="valid")
-    #transfer_dataset(data.train_data, name="train")
+        data.output_vocabulary = my_vocab
+        new_interaction_train = pickle.load(open("interactions_new_train", "rb"))
+        new_interaction_valid = pickle.load(open("interactions_new_valid", "rb"))
+        data.train_data.examples = new_interaction_train
+        data.valid_data.examples = new_interaction_valid
+        #transfer_dataset(data.valid_data, name="valid")
+        #transfer_dataset(data.train_data, name="train")
 
     """
     Newly added for debugging.
@@ -472,7 +473,7 @@ def main():
         data.output_vocabulary,
         data.anonymizer if params.anonymize and params.anonymization_scoring else None)
 
-    last_save_file = ""
+    last_save_file = "logs/save_30"
 
     if params.train:
         last_save_file = train(model, data, params, last_save_file)

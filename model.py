@@ -85,7 +85,7 @@ class ATISModel():
 
         self._pc = dy.ParameterCollection()
 
-        self.controller = Controller(output_vocabulary)
+        #self.controller = Controller(output_vocabulary)
         # Create the input embeddings
         self.input_embedder = Embedder(self._pc,
                                        params.input_embedding_size,
@@ -392,7 +392,7 @@ class ATISModel():
             step.scores for step in decoder_results.predictions]
         all_alignments = [
             step.aligned_tokens for step in decoder_results.predictions]
-        loss = dy.zeros(())
+        loss = dy.zeros((1, 1))
         if feed_gold_query:
             loss = du.compute_loss(example.gold_query(),
                                    all_scores,

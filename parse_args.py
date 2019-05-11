@@ -105,7 +105,7 @@ def interpret_args():
     parser.add_argument('--use_predicted_queries', type=bool, default=True)
     parser.add_argument('--evaluate_split', type=str, default='valid')
     parser.add_argument('--evaluate_with_gold_forcing', type=bool, default=False)
-    parser.add_argument('--eval_maximum_sql_length', type=int, default=300)
+    parser.add_argument('--eval_maximum_sql_length', type=int, default=200)
     parser.add_argument('--results_note', type=str, default='')
 
     parser.add_argument('--reference_results', type=str, default='')
@@ -118,6 +118,7 @@ def interpret_args():
     parser.add_argument('--model_level', type=int, default=0)
     parser.add_argument('--interaction_train', type=str, default="train_interactions")
     parser.add_argument('--interaction_valid', type=str, default="valid_interactions")
+    parser.add_argument('--new_version', type=bool, default=False)
 
     args = parser.parse_args()
 

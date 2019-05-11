@@ -131,6 +131,7 @@ def update_sums(metrics,
 
     TODO: don't use sums, just keep the raw value.
     """
+    print(loss.npvalue())
     if Metrics.LOSS in metrics:
         metrics_sums[Metrics.LOSS] += loss.npvalue()[0]
     if Metrics.TOKEN_ACCURACY in metrics:
