@@ -85,7 +85,10 @@ class ATISModel():
 
         self._pc = dy.ParameterCollection()
 
-        #self.controller = Controller(output_vocabulary)
+        if params.new_version:
+            self.controller = Controller(output_vocabulary)
+        else:
+            self.controller = None
         # Create the input embeddings
         self.input_embedder = Embedder(self._pc,
                                        params.input_embedding_size,

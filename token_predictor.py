@@ -276,8 +276,8 @@ class AnonymizationTokenPredictor(TokenPredictor):
             before_label = controller.vocab.token_to_label(controller.vocab.id_to_token(before_max))
             after_max = np.argmax(after)
             after_label = controller.vocab.token_to_label(controller.vocab.id_to_token(after_max))
-            print("before label: ", before_label, "token:", controller.vocab.id_to_token(before_max))
-            print("after label: ", after_label, "token:", controller.vocab.id_to_token(after_max))
+            #print("before label: ", before_label, "token:", controller.vocab.id_to_token(before_max))
+            #print("after label: ", after_label, "token:", controller.vocab.id_to_token(after_max))
 
         final_scores = vocab_scores
         aligned_tokens = []

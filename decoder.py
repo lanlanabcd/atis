@@ -137,7 +137,7 @@ class SequencePredictor():
                     decoder_input, decoder_states, dropout_amount)
                 if gold_sequence:
                     truth_label = controller.vocab.token_to_label(gold_sequence[index])
-                    print("Ground Truth: ", gold_sequence[index], "label:", truth_label)
+                    #print("Ground Truth: ", gold_sequence[index], "label:", truth_label)
                 prediction_input = PredictionInput(decoder_state=decoder_state,
                                                    input_hidden_states=encoder_states,
                                                    snippets=snippets,

@@ -77,7 +77,7 @@ def interpret_args():
     parser.add_argument('--max_snippet_age_embedding', type=int, default=4)
     parser.add_argument('--previous_decoder_snippet_encoding', type=bool, default=False)
 
-    parser.add_argument('--discourse_level_lstm', type=bool, default=False)
+    parser.add_argument('--discourse_level_lstm', type=bool, default=True)
 
     ### Training parameters
     parser.add_argument('--batch_size', type=int, default=16)
@@ -92,7 +92,7 @@ def interpret_args():
     parser.add_argument('--initial_learning_rate', type=float, default=0.001)
     parser.add_argument('--learning_rate_ratio', type=float, default=0.8)
 
-    parser.add_argument('--interaction_level', type=bool, default=False)
+    parser.add_argument('--interaction_level', type=bool, default=True)
     parser.add_argument('--reweight_batch', type=bool, default=True)
 
     ### Setting
@@ -118,7 +118,7 @@ def interpret_args():
     parser.add_argument('--model_level', type=int, default=0)
     parser.add_argument('--interaction_train', type=str, default="train_interactions")
     parser.add_argument('--interaction_valid', type=str, default="valid_interactions")
-    parser.add_argument('--new_version', type=bool, default=False)
+    parser.add_argument('--new_version', type=bool, default=True)
 
     args = parser.parse_args()
 

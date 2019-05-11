@@ -187,7 +187,7 @@ def train(model, data, params, last_save_file = None):
                                      model,
                                      params.train_maximum_sql_length,
                                      "valid-eval",
-                                     gold_forcing=False,
+                                     gold_forcing=True,
                                      database_username=params.database_username,
                                      database_password=params.database_password,
                                      database_timeout=params.database_timeout,
@@ -473,7 +473,7 @@ def main():
         data.output_vocabulary,
         data.anonymizer if params.anonymize and params.anonymization_scoring else None)
 
-    last_save_file = "logs/save_30"
+    last_save_file = ""
 
     if params.train:
         last_save_file = train(model, data, params, last_save_file)

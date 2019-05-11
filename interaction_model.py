@@ -60,7 +60,8 @@ class InteractionATISModel(ATISModel):
                                            gold_sequence=gold_query,
                                            input_sequence=input_sequence,
                                            snippets=snippets,
-                                           dropout_amount=self.dropout)
+                                           dropout_amount=self.dropout,
+                                           controller=self.controller)
 
             all_scores = [
                 step.scores for step in decoder_results.predictions]
