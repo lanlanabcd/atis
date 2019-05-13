@@ -72,6 +72,8 @@ class InteractionATISModel(ATISModel):
                                    all_scores,
                                    all_alignments,
                                    get_token_indices)
+            if not loss:
+                loss = dy.zeros((1, 1))
 
             if not training:
                 predicted_sequence = du.get_seq_from_scores(

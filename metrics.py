@@ -34,7 +34,7 @@ def write_prediction(fileptr,
 
     if compute_metrics:
         # First metric: whether flat predicted query is in the gold query set.
-        correct_string = (prediction == gold_query)
+        correct_string = (flat_prediction in flat_gold_queries)
         pred_obj["correct_string"] = correct_string
         """
         correct_string = " ".join(flat_prediction) in [

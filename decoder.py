@@ -135,8 +135,8 @@ class SequencePredictor():
             if len(sequence) == 0 or sequence[-1] != EOS_TOK:
                 _, decoder_state, decoder_states = du.forward_one_multilayer(
                     decoder_input, decoder_states, dropout_amount)
-                if gold_sequence:
-                    truth_label = controller.vocab.token_to_label(gold_sequence[index])
+                #if gold_sequence:
+                    #truth_label = controller.vocab.token_to_label(gold_sequence[index])
                     #print("Ground Truth: ", gold_sequence[index], "label:", truth_label)
                 prediction_input = PredictionInput(decoder_state=decoder_state,
                                                    input_hidden_states=encoder_states,

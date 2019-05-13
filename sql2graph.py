@@ -1,7 +1,7 @@
 import re
 import pickle
 import pymysql
-from my_vocab import Vocabulary
+import my_vocab
 import state_controler
 
 operation_list = ['>', '<', '=', '>=', '<=', 'LIKE']
@@ -426,7 +426,7 @@ def set_environment(path):
     db = pymysql.connect(user='root', password='mysql12928', database='atis3')
     cursor = db.cursor()
     data = pickle.load(open(path, "rb"))
-    vocab = Vocabulary(path)
+    vocab = my_vocab.Vocabulary(path)
     controller = state_controler.Controller(vocab)
     return controller, data, cursor
 
@@ -440,13 +440,12 @@ def convert_to_new_answer(ori_sql):
 def transfer_dataset(dataset, controller=None, name=None):
     for interaction in dataset.examples:
         for utterance in interaction.utterances:
-            #print(utterance.gold_query_to_use)
-            new_ans = convert_to_new_answer(utterance.gold_query_to_use)
-            #print(new_ans)
-            if "'CO'" in new_ans:
-                print(utterance.gold_query_to_use)
+            for i, gold in enumerate(utterance.all_gold_queries):
+                new_ans = convert_to_new_answer(gold[0])
+                utterance.all_gold_queries[i] = [new_ans, utterance.all_gold_queries[i][1]]
                 print(new_ans)
-                a = input()
+                print(i)
+            new_ans = convert_to_new_answer(utterance.gold_query_to_use)
             utterance.gold_query_to_use = new_ans
             """
             if controller:
@@ -457,6 +456,8 @@ def transfer_dataset(dataset, controller=None, name=None):
                     raise(AssertionError("Error: Stack Not Empty!"))
             """
     pickle.dump(dataset.examples, open("interactions_new_" + name, "wb"))
+    print(dataset.examples[0].utterances[0].all_gold_queries)
+    print("succeed!")
 
 
 if __name__ == '__main__':

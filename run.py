@@ -198,7 +198,6 @@ def train(model, data, params, last_save_file = None):
             #experiment.add_scalar_value(
             #    "valid_gold_" + name.name, value, step=epochs)
 
-        exit(0)
 
         valid_loss = valid_eval_results[Metrics.LOSS]
         valid_token_accuracy = valid_eval_results[Metrics.TOKEN_ACCURACY]
@@ -231,6 +230,11 @@ def train(model, data, params, last_save_file = None):
             log.put(
                 "maximum string accuracy:\t" +
                 str(maximum_string_accuracy))
+            save_path = "save_" + str(epochs)
+            if params.interaction_level:
+                save_path += "-interaction"
+            else:
+                save_path += "-utterance"
             last_save_file = os.path.join(params.logdir, "save_" + str(epochs))
             model.save(last_save_file)
 
@@ -454,15 +458,16 @@ def main():
 
         data.output_vocabulary = my_vocab
         new_interaction_train = pickle.load(open("interactions_new_train", "rb"))
-        new_interaction_valid = pickle.load(open("interactions_new_valid", "rb"))
+        #new_interaction_valid = pickle.load(open("interactions_new_valid", "rb"))
         data.train_data.examples = new_interaction_train
-        data.valid_data.examples = new_interaction_valid
-        #transfer_dataset(data.valid_data, name="valid")
+        #data.valid_data.examples = new_interaction_valid
+        transfer_dataset(data.valid_data, name="valid")
         #transfer_dataset(data.train_data, name="train")
 
     """
     Newly added for debugging.
     """
+    print(len(data.output_vocabulary.raw_vocab["anon_symbol"]))
 
     # Construct the model object.
     model_type = InteractionATISModel if params.interaction_level else ATISModel

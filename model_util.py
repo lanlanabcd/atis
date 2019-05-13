@@ -125,12 +125,13 @@ def update_sums(metrics,
                 database_username="",
                 database_password="",
                 database_timeout=0,
-                gold_table=None):
+                gold_table=None,
+                flat_gold_queries=None):
     """" Updates summing for metrics in an aggregator.
 
     TODO: don't use sums, just keep the raw value.
     """
-    print(loss.npvalue())
+    #print(loss.npvalue())
     if Metrics.LOSS in metrics:
         metrics_sums[Metrics.LOSS] += loss.npvalue()[0]
     if Metrics.TOKEN_ACCURACY in metrics:
@@ -146,7 +147,7 @@ def update_sums(metrics,
                 len(gold_query)
     if Metrics.STRING_ACCURACY in metrics:
         metrics_sums[Metrics.STRING_ACCURACY] += int(
-            flat_sequence == original_gold_query)
+            gold_query == predicted_sequence)
 
     if Metrics.CORRECT_TABLES in metrics:
         assert database_username, "You did not provide a database username"
@@ -384,6 +385,7 @@ def evaluate_interaction_sample(sample,
                         gold_forcing,
                         loss,
                         token_accuracy,
+                        flat_gold_queries=gold_queries,
                         database_username=database_username,
                         database_password=database_password,
                         database_timeout=database_timeout,

@@ -1,5 +1,6 @@
 import pymysql
 import pickle
+import sql2graph
 
 vocab = {'operation_list' : ['>', '<', '=', '>=', '<=', 'LIKE', 'is null', 'is not null', 'between', 'in', 'not between',
                              'not in'],
@@ -91,7 +92,7 @@ def collect_anon(train_path, dev_path, tables, columns):
     interactions = pickle.load(open(train_path, "rb"))
     for utterances in interactions.examples:
         for utterance in utterances.utterances:
-            for i, word in enumerate(utterance.gold_query_to_use):
+            for i, word in enumerate(utterance.original_gold_query):
                 if "#" in word:
                     anonimizers.append(word)
                 if word in value_indicator:
@@ -119,6 +120,7 @@ def collect_anon(train_path, dev_path, tables, columns):
                         values.append(token)
     values = set(values) - set(anonimizers)
     print(values)
+    print("length of anonimizers:", len(anonimizers))
     return list(set(anonimizers)), list(set(values))
 
 
@@ -145,10 +147,13 @@ def generate_table_and_column():
 
 
 if __name__ == "__main__":
-    path = "/Users/mac/PycharmProjects/atis/processed_data/interactions"
-    ppath = "/Users/mac/PycharmProjects/atis/dev_interactions"
-    output_vocab = Vocabulary(ppath)
+    path = "/Users/mac/PycharmProjects/atis/valid_interactions"
+    ppath = "/Users/mac/PycharmProjects/atis/train_interactions"
+    output_vocab = Vocabulary(path, ppath)
     print(len(output_vocab))
     print(output_vocab.id2label)
     print(output_vocab.get_index_by_id_list([0, 1, 10]))
     print(vocab)
+    valid = pickle.load(open(path, "rb"))
+    sql2graph.transfer_dataset(valid, name="val")
+    pickle.dump(valid, open("interactions_new_valid.json", "wb"))
