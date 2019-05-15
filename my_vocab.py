@@ -13,10 +13,12 @@ vocab = {'operation_list' : ['>', '<', '=', '>=', '<=', 'LIKE', 'is null', 'is n
 'unknown_token' : ['_UNK'],
 'neg' : ['not'],
 'bracket': ['('],
-'eos': ['_EOS']}
+'eos': ['_EOS'],
+'from': ['from']}
 
 inorder_label_list = ['operation_list', 'aggregator_list', 'key_word', 'conjunction', 'all_any', 'functional_word',
-                      'unknown_token', 'value', 'anon_symbol', 'column', 'table', 'neg', 'bracket', 'end_token', 'eos']
+                      'unknown_token', 'value', 'anon_symbol', 'column', 'table', 'neg', 'bracket', 'end_token', 'eos',
+                      'from']
 
 value_indicator = ['>', '<', '=', '>=', '<=', 'LIKE', 'BETWEEN', 'AND']
 
@@ -92,7 +94,7 @@ def collect_anon(train_path, dev_path, tables, columns):
     interactions = pickle.load(open(train_path, "rb"))
     for utterances in interactions.examples:
         for utterance in utterances.utterances:
-            for i, word in enumerate(utterance.original_gold_query):
+            for i, word in enumerate(utterance.gold_query_to_use):
                 if "#" in word:
                     anonimizers.append(word)
                 if word in value_indicator:
@@ -110,8 +112,6 @@ def collect_anon(train_path, dev_path, tables, columns):
     for utterances in interactions.examples:
         for utterance in utterances.utterances:
             for i, word in enumerate(utterance.gold_query_to_use):
-                if word == "'CO'":
-                    p = input("FOUND. CONTINUE?")
                 if "#" in word:
                     anonimizers.append(word)
                 if word in value_indicator:

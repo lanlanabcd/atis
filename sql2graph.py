@@ -3,6 +3,7 @@ import pickle
 import pymysql
 import my_vocab
 import state_controler
+from graph import node, Constraint
 
 operation_list = ['>', '<', '=', '>=', '<=', 'LIKE']
 aggregator_list = ['MAX', 'count', 'MIN', 'SUM', 'AVG']
@@ -23,31 +24,6 @@ def get_right_bracket(sql):
 class exception(Exception):
     def __init__(self, str):
         print(str)
-
-
-class node:
-    def __init__(self, table=None, column=None, operation=None, value=None, create_subgraph=False, aggregate = None, \
-                 negation=False):
-        self.table = table
-        self.column = column
-        self.create_subgraph = create_subgraph
-        self.operation = operation
-        self.aggregate = aggregate
-        self.value = value
-        self.constraint = []
-        self.negation = negation
-        self.additional_col = []
-        self.additional_table = []
-        self.additional_agg = []
-        self.group_by = None
-        self.distinct = False
-
-
-class Constraint:
-    def __init__(self, conjunction = 'and', cons = [], negation = False):
-        self.conjunction = conjunction
-        self.cons = cons
-        self.negation = negation
 
 
 def handle_where_clause(head_node, sql_str):
@@ -287,7 +263,10 @@ def handle_cons(cons, if_and, conjunction):
                     new_ans.append(cons.operation.split(' ')[0])
                     new_ans.append(cons.operation.split(' ')[1])
                 new_ans.append(cons.value)
-                sql += col_and_table(cons)[0] + " " + cons.operation + " " + cons.value
+                try:
+                    sql += col_and_table(cons)[0] + " " + cons.operation + " " + cons.value
+                except:
+                    print("here")
             else:
                 new_ans.extend(col_and_table(cons)[1])
                 if "all" not in cons.operation and "any" not in cons.operation:
@@ -329,15 +308,25 @@ def handle_cons(cons, if_and, conjunction):
 
 
 def handle_additional_col(new_ans, add):
+    agg_exist = False
     for agg in aggregator_list:
         res = re.findall(agg + "\((.*?)\)", add)
         if res:
+            agg_exist = True
             new_ans.append(agg)
             if '.' in res[0]:
                 new_ans.append(res[0].split('.')[0])
                 new_ans.append(res[0].split('.')[1])
             else:
                 new_ans.append(res[0])
+    if not agg_exist:
+        if '.' in add:
+            new_ans.append(add.split('.')[0])
+            new_ans.append(add.split('.')[1])
+        else:
+            new_ans.append(add)
+
+
 
 
 def get_aggregated_col(col, agg):
@@ -360,9 +349,19 @@ def parse_graph(head_node, if_first):
     if not head_node.aggregate:
         sql += col_and_table(head_node)[0]
         new_ans.extend(col_and_table(head_node)[1])
+        """
         for add in head_node.additional_col:
             assert '.' in add or '*' in add
             handle_additional_col(new_ans, add)
+        """
+        for i in range(len(head_node.additional_col)):
+            if head_node.additional_agg[i]:
+                new_ans.append(head_node.additional_agg[i])
+            if '.' in head_node.additional_col[i]:
+                new_ans.append(head_node.additional_col[i].split('.')[0])
+                new_ans.append(head_node.additional_col[i].split('.')[1])
+            else:
+                new_ans.append(head_node.additional_col[i])
         if head_node.additional_col:
             res = get_aggregated_col(head_node.additional_col, head_node.additional_agg)
             sql += " , " + " , ".join(res)
@@ -375,8 +374,11 @@ def parse_graph(head_node, if_first):
         sql += head_node.aggregate + "(" + head_node.column
         sql += ") "
     sql += " from " + head_node.table
+    new_ans.append("from")
+    new_ans.append(head_node.table)
     if head_node.additional_table:
         sql += " , " + " , ".join(head_node.additional_table)
+        new_ans.extend(head_node.additional_table)
     if head_node.constraint:
         sql += " where "
         if_and = False
@@ -422,11 +424,11 @@ def recover_entity(sql_list, entities):
     return " ".join(sql_list)
 
 
-def set_environment(path):
+def set_environment(path, ppath):
     db = pymysql.connect(user='root', password='mysql12928', database='atis3')
     cursor = db.cursor()
-    data = pickle.load(open(path, "rb"))
-    vocab = my_vocab.Vocabulary(path)
+    data = pickle.load(open(ppath, "rb"))
+    vocab = my_vocab.Vocabulary(path, ppath)
     controller = state_controler.Controller(vocab)
     return controller, data, cursor
 
@@ -461,17 +463,19 @@ def transfer_dataset(dataset, controller=None, name=None):
 
 
 if __name__ == '__main__':
-    path = "/Users/mac/PycharmProjects/atis/dev_interactions"
-    controller, data, cursor = set_environment(path)
+    path = "/Users/mac/PycharmProjects/atis/train_interactions"
+    ppath = "/Users/mac/PycharmProjects/atis/valid_interactions"
+    controller, data, cursor = set_environment(path, ppath)
     cnt = 0
     debug = 0
     anonym = 0
     for c1, interaction in enumerate(data.examples):
         for c2, utterance in enumerate(interaction.utterances):
             cnt += 1
-            if cnt in [92, 388, 463, 464, 2064, 2277, 3946, 3966, 5565, 5566, 1586, 764, 768, 1894, 1902, 1929, 1930, 1931]:
+            if cnt < 0:
                 continue
-            if cnt < 1894:
+            if cnt in [92, 388, 463, 464, 2064, 2277, 3946, 3966, 5565, 5566, 1586,
+                       764, 768, 1894, 1902, 1929, 1930, 1931]:
                 continue
             if debug:
                 sql = "( SELECT count ( DISTINCT fare_basis_code ) FROM fare_basis WHERE fare_basis.economy = 'YES' ) ;"
@@ -479,40 +483,51 @@ if __name__ == '__main__':
                 print(sql)
             elif not anonym:
                 ori_sql = " ".join(utterance.original_gold_query)
-                #print(ori_sql)
                 print(utterance.original_gold_query)
-                #sql, entity = extract_entity(ori_sql)
                 graph = construct_graph(utterance.original_gold_query)
                 line, new_ans = parse_graph(graph, True)
-                #line = recover_entity(line.split(' '), entity)
-                #tmp = recover_entity(new_ans, entity)
-                print(line)
-                #print(utterance.gold_sql_results)
                 print(new_ans)
+                for token in new_ans:
+                    controller.update(token)
+                if controller.stack or controller.sql_stack:
+                    raise(AssertionError("Error: Stack Not Empty!"))
+                print(line)
+                new_line, tmp_ans = parse_graph(controller.top, True)
+                print(new_line)
+
                 cursor.execute(line)
                 res = list(cursor.fetchall())
+                cursor.execute(new_line)
+                new_res = list(cursor.fetchall())
                 gold = utterance.gold_sql_results
                 res.sort()
                 gold.sort()
+                new_res.sort()
                 print(cnt)
+                if res != new_res:
+                    print(res)
+                    print(new_res)
+                    raise exception("results don't match!")
+                """
                 if res != gold:
                     print(res)
                     cursor.execute(ori_sql)
                     gold = list(cursor.fetchall())
                     if res != gold:
-                        raise exception("results doesn't match!")
-                print("=======")
+                        raise exception("results don't match!")
+                """
             else:
-                print("=======")
                 print(cnt)
                 print(utterance.gold_query_to_use)
                 new_ans = convert_to_new_answer(utterance.gold_query_to_use)
                 print(new_ans)
                 utterance.gold_query_to_use = new_ans
+                for token in new_ans:
+                    controller.update(token)
+                if controller.stack or controller.sql_stack:
+                    raise(AssertionError("Error: Stack Not Empty!"))
             print(utterance.original_input_seq)
-            for token in new_ans:
-                controller.update(token)
-            if controller.stack:
-                raise(AssertionError("Error: Stack Not Empty!"))
             controller.initialize()
+            print("=======")
+
     pickle.dump(data, open("interactions_new", "wb"))

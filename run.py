@@ -458,10 +458,10 @@ def main():
 
         data.output_vocabulary = my_vocab
         new_interaction_train = pickle.load(open("interactions_new_train", "rb"))
-        #new_interaction_valid = pickle.load(open("interactions_new_valid", "rb"))
+        new_interaction_valid = pickle.load(open("interactions_new_valid", "rb"))
         data.train_data.examples = new_interaction_train
-        #data.valid_data.examples = new_interaction_valid
-        transfer_dataset(data.valid_data, name="valid")
+        data.valid_data.examples = new_interaction_valid
+        #transfer_dataset(data.valid_data, name="valid")
         #transfer_dataset(data.train_data, name="train")
 
     """
