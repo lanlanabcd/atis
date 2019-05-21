@@ -439,7 +439,7 @@ def convert_to_new_answer(ori_sql):
     return new_ans
 
 
-def transfer_dataset(dataset, controller=None, name=None):
+def transfer_dataset(dataset, controller=None, name=None, maximum=None):
     for interaction in dataset.examples:
         for utterance in interaction.utterances:
             for i, gold in enumerate(utterance.all_gold_queries):
@@ -452,6 +452,8 @@ def transfer_dataset(dataset, controller=None, name=None):
                 #print(new_ans)
                 #print(i)
             new_ans = convert_to_new_answer(utterance.gold_query_to_use)
+            if 'rank' in new_ans:
+                new_ans[new_ans.index('rank')] = 'ranks'
             utterance.gold_query_to_use = new_ans
             """
             if controller:
@@ -463,10 +465,17 @@ def transfer_dataset(dataset, controller=None, name=None):
             """
     for interaction in dataset.examples:
         new_answers = []
+        valids = []
         for i, utterance in enumerate(interaction.utterances):
-            if i > 0:
+            print(len(utterance.gold_query_to_use))
+            if len(utterance.gold_query_to_use) > maximum:
+                continue
+            else:
+                print(i)
+                valids.append(i)
+            if len(valids) > 1:
                 cur_ans = utterance.gold_query_to_use
-                prev_ans = interaction.utterances[i - 1].gold_query_to_use
+                prev_ans = interaction.utterances[valids[-2]].gold_query_to_use
                 leng = len(cur_ans)
                 if leng > len(prev_ans):
                     leng = len(prev_ans)
@@ -477,19 +486,21 @@ def transfer_dataset(dataset, controller=None, name=None):
                     if cur_ans[j] == '<S>' or cur_ans[j] == '<C>':
                         count += 1
                 new_answers.append(count)
+        flag = False
         for i, utterance in enumerate(interaction.utterances):
-            if i == 0:
+            if not flag or i not in valids:
                 utterance.copy_gold_query = None
                 continue
             cnt = 0
-            if new_answers[i-1] == 0:
+            last = new_answers.pop(0)
+            if last == 0:
                 utterance.copy_gold_query = [0] + utterance.gold_query_to_use
                 continue
             for index, token in enumerate(utterance.gold_query_to_use):
                 if token == '<S>' or token == '<C>':
                     cnt += 1
-                    if cnt == new_answers[i-1]:
-                        utterance.copy_gold_query = [new_answers[i-1]] + utterance.gold_query_to_use[index:]
+                    if cnt == last:
+                        utterance.copy_gold_query = [last] + utterance.gold_query_to_use[index:]
                         break
             #print(utterance.gold_query_to_use)
             #print(utterance.input_seq_to_use)

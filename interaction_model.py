@@ -112,7 +112,7 @@ class InteractionATISModel(ATISModel):
         decoder_states = [
             pred.decoder_state for pred in decoder_results.predictions]
 
-        if  pick_loss:
+        if pick_loss:
             fed_sequence = fed_sequence[1:]
         for token, state in zip(fed_sequence[:-1], decoder_states[1:]):
             if snippet_handler.is_snippet(token):
@@ -159,6 +159,9 @@ class InteractionATISModel(ATISModel):
         decoder_states = []
 
         discourse_state, discourse_lstm_states = self._initialize_discourse_states()
+
+        # 指示是否开始新的轮次
+        new_turn = True
 
         for utterance_index, utterance in enumerate(
                 interaction.gold_utterances()):
@@ -221,7 +224,7 @@ class InteractionATISModel(ATISModel):
             if len(gold_query) <= max_generation_length \
                     and len(previous_query) <= max_generation_length:
                 #print("=====")
-                #print(utterance_index)
+                print(utterance_index)
                 prediction = self.predict_turn(final_utterance_state,
                                                utterance_states,
                                                max_generation_length,
@@ -230,8 +233,9 @@ class InteractionATISModel(ATISModel):
                                                input_sequence=flat_sequence,
                                                feed_gold_tokens=True,
                                                training=True,
-                                               first_utterance=(utterance_index==0),
+                                               first_utterance=new_turn,
                                                gold_copy=gold_copy)
+                new_turn = False
                 loss = prediction[1]
                 decoder_states = prediction[3]
                 total_gold_tokens += len(gold_query)

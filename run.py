@@ -461,16 +461,12 @@ def main():
         print(len(my_vocab))
 
         data.output_vocabulary = my_vocab
-        new_interaction_train = pickle.load(open("interactions_new_train", "rb"))
-        new_interaction_valid = pickle.load(open("interactions_new_valid", "rb"))
-        data.train_data.examples = new_interaction_train
-        data.valid_data.examples = new_interaction_valid
-        #transfer_dataset(data.valid_data, name="valid")
-        #transfer_dataset(data.train_data, name="train")
-
-    """
-    Newly added for debugging.
-    """
+        #new_interaction_train = pickle.load(open("interactions_new_train", "rb"))
+        #new_interaction_valid = pickle.load(open("interactions_new_valid", "rb"))
+        #data.train_data.examples = new_interaction_train
+        #data.valid_data.examples = new_interaction_valid
+        transfer_dataset(data.valid_data, name="valid", maximum=params.train_maximum_sql_length)
+        transfer_dataset(data.train_data, name="train", maximum=params.train_maximum_sql_length)
 
     # Construct the model object.
     model_type = InteractionATISModel if params.interaction_level else ATISModel

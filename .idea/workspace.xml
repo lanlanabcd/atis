@@ -2,38 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5da5afab-f0cc-4fa1-8b50-10c29406a74e" name="Default Changelist" comment="12.28 修正两个BUG">
-      <change afterPath="$PROJECT_DIR$/eval_results/EVAL-new-construct_fail.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/eval_results/EVAL-new-not_match-ans.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/eval_results/EVAL-new-not_match-gold.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/eval_results/EVAL-new-not_match.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/evaluate.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vocab_no_anon" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cal_property.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/atis_batch.py" beforeDir="false" afterPath="$PROJECT_DIR$/atis_batch.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/decoder.py" beforeDir="false" afterPath="$PROJECT_DIR$/decoder.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/interaction_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/interaction_model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/interactions_new_train" beforeDir="false" afterPath="$PROJECT_DIR$/interactions_new_train" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/interactions_new_valid" beforeDir="false" afterPath="$PROJECT_DIR$/interactions_new_valid" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/logs/args.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/args.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/devpredicted_predictions.json" beforeDir="false" afterPath="$PROJECT_DIR$/logs/devpredicted_predictions.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/logs/log.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/save_0" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/save_10" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/save_11" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/save_18" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/save_30" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/save_8" beforeDir="false" afterPath="$PROJECT_DIR$/logs/save_5" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model_util.py" beforeDir="false" afterPath="$PROJECT_DIR$/model_util.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/my_vocab.py" beforeDir="false" afterPath="$PROJECT_DIR$/my_vocab.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/new_vocab_train" beforeDir="false" afterPath="$PROJECT_DIR$/new_vocab_train" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/parse_args.py" beforeDir="false" afterPath="$PROJECT_DIR$/parse_args.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/run.py" beforeDir="false" afterPath="$PROJECT_DIR$/run.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sql2graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/sql2graph.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/state_controler.py" beforeDir="false" afterPath="$PROJECT_DIR$/state_controler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/token_predictor.py" beforeDir="false" afterPath="$PROJECT_DIR$/token_predictor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/valid-eval-old.json" beforeDir="false" afterPath="$PROJECT_DIR$/valid-eval-old.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/valid-eval.json" beforeDir="false" afterPath="$PROJECT_DIR$/valid-eval.json" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -46,8 +21,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/run.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="195">
-              <caret line="154" selection-start-line="154" selection-end-line="154" />
+            <state relative-caret-position="288">
+              <caret line="468" column="95" selection-start-line="468" selection-start-column="95" selection-end-line="468" selection-end-column="95" />
               <folding>
                 <element signature="e#72#81#0" expanded="true" />
               </folding>
@@ -70,7 +45,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/state_controler.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="158">
+            <state relative-caret-position="105">
               <caret line="48" column="8" selection-start-line="48" selection-start-column="8" selection-end-line="48" selection-end-column="8" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
@@ -79,11 +54,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/interaction_model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="742">
-              <caret line="228" column="59" selection-start-line="228" selection-start-column="59" selection-end-line="228" selection-end-column="59" />
+            <state relative-caret-position="224">
+              <caret line="234" column="57" selection-start-line="234" selection-start-column="57" selection-end-line="234" selection-end-column="57" />
               <folding>
                 <element signature="e#59#77#0" expanded="true" />
               </folding>
@@ -103,11 +78,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/decoder.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="118">
-              <caret line="151" column="13" lean-forward="true" selection-start-line="151" selection-start-column="13" selection-end-line="151" selection-end-column="13" />
+            <state relative-caret-position="133">
+              <caret line="152" column="28" selection-start-line="152" selection-start-column="28" selection-end-line="152" selection-end-column="28" />
               <folding>
                 <element signature="e#48#82#0" expanded="true" />
               </folding>
@@ -116,36 +91,12 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/token_predictor.py">
+        <entry file="file://$PROJECT_DIR$/cal_property.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="188">
-              <caret line="265" selection-start-line="265" selection-end-line="265" />
+            <state relative-caret-position="195">
+              <caret line="13" column="36" selection-start-line="13" selection-start-column="36" selection-end-line="13" selection-end-column="36" />
               <folding>
-                <element signature="e#25#59#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/model.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-130">
-              <caret line="68" column="36" selection-start-line="68" selection-start-column="36" selection-end-line="68" selection-end-column="36" />
-              <folding>
-                <element signature="e#59#77#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/parse_args.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="554">
-              <caret line="122" selection-start-line="122" selection-end-line="122" />
-              <folding>
-                <element signature="e#0#10#0" expanded="true" />
+                <element signature="e#0#18#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -154,10 +105,22 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/sql2graph.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="150">
-              <caret line="484" column="36" selection-start-line="484" selection-start-column="36" selection-end-line="484" selection-end-column="36" />
+            <state relative-caret-position="126">
+              <caret line="504" column="44" selection-start-line="504" selection-start-column="44" selection-end-line="504" selection-end-column="44" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/parse_args.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="180">
+              <caret line="107" column="32" selection-start-line="107" selection-start-column="32" selection-end-line="107" selection-end-column="32" />
+              <folding>
+                <element signature="e#0#10#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -230,11 +193,12 @@
         <option value="$PROJECT_DIR$/token_predictor.py" />
         <option value="$PROJECT_DIR$/model.py" />
         <option value="$PROJECT_DIR$/atis_batch.py" />
+        <option value="$PROJECT_DIR$/parse_args.py" />
+        <option value="$PROJECT_DIR$/state_controler.py" />
+        <option value="$PROJECT_DIR$/cal_property.py" />
+        <option value="$PROJECT_DIR$/decoder.py" />
         <option value="$PROJECT_DIR$/run.py" />
         <option value="$PROJECT_DIR$/sql2graph.py" />
-        <option value="$PROJECT_DIR$/parse_args.py" />
-        <option value="$PROJECT_DIR$/decoder.py" />
-        <option value="$PROJECT_DIR$/state_controler.py" />
         <option value="$PROJECT_DIR$/interaction_model.py" />
       </list>
     </option>
@@ -548,8 +512,8 @@
       <window_info anchor="bottom" x="21" y="211" width="1259" height="262" id="Debug" order="5" sideWeight="0.49086577" weight="0.42301458" />
       <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.49960285" weight="0.3273906" />
       <window_info anchor="bottom" id="Version Control" order="7" sideWeight="0.49960285" weight="0.3273906" />
-      <window_info anchor="bottom" id="Terminal" order="8" sideWeight="0.4638602" weight="0.38897893" />
-      <window_info anchor="bottom" id="Python Console" order="9" sideWeight="0.4765687" weight="0.28363046" />
+      <window_info anchor="bottom" id="Terminal" order="8" sideWeight="0.4638602" weight="0.33225283" />
+      <window_info anchor="bottom" id="Python Console" order="9" sideWeight="0.4765687" weight="0.37763372" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.5234313" side_tool="true" weight="0.39384118" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -621,7 +585,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/sql2graph.py</url>
-          <line>569</line>
+          <line>580</line>
           <option name="timeStamp" value="147" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -646,7 +610,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/sql2graph.py</url>
-          <line>530</line>
+          <line>541</line>
           <option name="timeStamp" value="179" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -693,16 +657,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/visualize_attention.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/logs/devgold_predictions.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret column="144" lean-forward="true" selection-start-column="144" selection-end-column="144" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/metric_averages.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="101">
@@ -985,26 +939,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/sql2graph.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="484" column="36" selection-start-line="484" selection-start-column="36" selection-end-line="484" selection-end-column="36" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/run.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="154" selection-start-line="154" selection-end-line="154" />
-          <folding>
-            <element signature="e#72#81#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/attention.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-59">
@@ -1032,6 +966,9 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/_predictions.json">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/atis_batch.py">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -1052,19 +989,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/decoder.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="118">
-          <caret line="151" column="13" lean-forward="true" selection-start-line="151" selection-start-column="13" selection-end-line="151" selection-end-column="13" />
-          <folding>
-            <element signature="e#48#82#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/state_controler.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="158">
+        <state relative-caret-position="105">
           <caret line="48" column="8" selection-start-line="48" selection-start-column="8" selection-end-line="48" selection-end-column="8" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
@@ -1072,22 +999,62 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/cal_property.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="13" column="36" selection-start-line="13" selection-start-column="36" selection-end-line="13" selection-end-column="36" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/parse_args.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="554">
-          <caret line="122" selection-start-line="122" selection-end-line="122" />
+        <state relative-caret-position="180">
+          <caret line="107" column="32" selection-start-line="107" selection-start-column="32" selection-end-line="107" selection-end-column="32" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/run.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="288">
+          <caret line="468" column="95" selection-start-line="468" selection-start-column="95" selection-end-line="468" selection-end-column="95" />
+          <folding>
+            <element signature="e#72#81#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sql2graph.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="504" column="44" selection-start-line="504" selection-start-column="44" selection-end-line="504" selection-end-column="44" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/interaction_model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="742">
-          <caret line="228" column="59" selection-start-line="228" selection-start-column="59" selection-end-line="228" selection-end-column="59" />
+        <state relative-caret-position="224">
+          <caret line="234" column="57" selection-start-line="234" selection-start-column="57" selection-end-line="234" selection-end-column="57" />
           <folding>
             <element signature="e#59#77#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/decoder.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="152" column="28" selection-start-line="152" selection-start-column="28" selection-end-line="152" selection-end-column="28" />
+          <folding>
+            <element signature="e#48#82#0" expanded="true" />
           </folding>
         </state>
       </provider>

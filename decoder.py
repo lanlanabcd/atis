@@ -142,7 +142,7 @@ class SequencePredictor():
             controller.initialize()
 
         # TODO: 一开始通过LAST_DECODER_STATES和当前ENCODER STATES来预测起始值，然后可以把之前的扔了
-        if not first_utterance and gold_copy:
+        if (not first_utterance) and gold_copy:
             encoder_state = final_encoder_state[1][-1]
             intermediate = du.linear_transform(encoder_state, self.pick_pos_param)
             #print("intermediate: ", intermediate.dim()[0])
@@ -152,6 +152,7 @@ class SequencePredictor():
             score = dy.concatenate(score)
             #print(gold_copy)
             #print(gold_sequence)
+            #print("============")
             pick_loss = dy.pickneglogsoftmax(score, gold_copy[0])
 
             self.last_decoder_states = [final_encoder_state[1][-1]]
