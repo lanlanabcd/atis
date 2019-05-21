@@ -59,6 +59,13 @@ class UtteranceItem():
         return self.interaction.utterances[self.utterance_index].gold_query_to_use + [
             vocab.EOS_TOK]
 
+    def gold_copy(self):
+        if self.interaction.utterances[self.utterance_index].copy_gold_query:
+            return self.interaction.utterances[self.utterance_index].copy_gold_query + [
+            vocab.EOS_TOK]
+        else:
+            return None
+
     def gold_table(self):
         return self.interaction.utterances[self.utterance_index].gold_sql_results
 

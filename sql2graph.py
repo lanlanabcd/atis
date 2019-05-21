@@ -444,9 +444,13 @@ def transfer_dataset(dataset, controller=None, name=None):
         for utterance in interaction.utterances:
             for i, gold in enumerate(utterance.all_gold_queries):
                 new_ans = convert_to_new_answer(gold[0])
+                if 'rank' in new_ans:
+                    print(gold[0])
+                    print(new_ans)
+                    new_ans[new_ans.index('rank')] = 'ranks'
                 utterance.all_gold_queries[i] = [new_ans, utterance.all_gold_queries[i][1]]
-                print(new_ans)
-                print(i)
+                #print(new_ans)
+                #print(i)
             new_ans = convert_to_new_answer(utterance.gold_query_to_use)
             utterance.gold_query_to_use = new_ans
             """
@@ -457,6 +461,39 @@ def transfer_dataset(dataset, controller=None, name=None):
                 if controller.stack:
                     raise(AssertionError("Error: Stack Not Empty!"))
             """
+    for interaction in dataset.examples:
+        new_answers = []
+        for i, utterance in enumerate(interaction.utterances):
+            if i > 0:
+                cur_ans = utterance.gold_query_to_use
+                prev_ans = interaction.utterances[i - 1].gold_query_to_use
+                leng = len(cur_ans)
+                if leng > len(prev_ans):
+                    leng = len(prev_ans)
+                count = 0
+                for j in range(leng):
+                    if cur_ans[j] != prev_ans[j]:
+                        break
+                    if cur_ans[j] == '<S>' or cur_ans[j] == '<C>':
+                        count += 1
+                new_answers.append(count)
+        for i, utterance in enumerate(interaction.utterances):
+            if i == 0:
+                utterance.copy_gold_query = None
+                continue
+            cnt = 0
+            if new_answers[i-1] == 0:
+                utterance.copy_gold_query = [0] + utterance.gold_query_to_use
+                continue
+            for index, token in enumerate(utterance.gold_query_to_use):
+                if token == '<S>' or token == '<C>':
+                    cnt += 1
+                    if cnt == new_answers[i-1]:
+                        utterance.copy_gold_query = [new_answers[i-1]] + utterance.gold_query_to_use[index:]
+                        break
+            #print(utterance.gold_query_to_use)
+            #print(utterance.input_seq_to_use)
+        #print("\n" + "==========")
     pickle.dump(dataset.examples, open("interactions_new_" + name, "wb"))
     print(dataset.examples[0].utterances[0].all_gold_queries)
     print("succeed!")

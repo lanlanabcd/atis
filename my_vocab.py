@@ -94,11 +94,14 @@ def collect_anon(train_path, dev_path, tables, columns):
     interactions = pickle.load(open(train_path, "rb"))
     for utterances in interactions.examples:
         for utterance in utterances.utterances:
-            for i, word in enumerate(utterance.gold_query_to_use):
+            for i, word in enumerate(utterance.original_gold_query):
+                if word == 'ranks' or word == 'RANK':
+                    print(utterance.gold_query_to_use)
+                    exit(0)
                 if "#" in word:
                     anonimizers.append(word)
                 if word in value_indicator:
-                    token = utterance.gold_query_to_use[i+1]
+                    token = utterance.original_gold_query[i+1]
                     if token != '(':
                         values.append(token)
                     """
@@ -111,11 +114,11 @@ def collect_anon(train_path, dev_path, tables, columns):
     interactions = pickle.load(open(dev_path, "rb"))
     for utterances in interactions.examples:
         for utterance in utterances.utterances:
-            for i, word in enumerate(utterance.gold_query_to_use):
+            for i, word in enumerate(utterance.original_gold_query):
                 if "#" in word:
                     anonimizers.append(word)
                 if word in value_indicator:
-                    token = utterance.gold_query_to_use[i+1]
+                    token = utterance.original_gold_query[i+1]
                     if token != '(':
                         values.append(token)
     values = set(values) - set(anonimizers)
@@ -147,13 +150,13 @@ def generate_table_and_column():
 
 
 if __name__ == "__main__":
-    path = "/Users/mac/PycharmProjects/atis/valid_interactions"
-    ppath = "/Users/mac/PycharmProjects/atis/train_interactions"
+    path = "/Users/mac/PycharmProjects/atis/train_interactions"
+    ppath = "/Users/mac/PycharmProjects/atis/valid_interactions"
     output_vocab = Vocabulary(path, ppath)
     print(len(output_vocab))
     print(output_vocab.id2label)
     print(output_vocab.get_index_by_id_list([0, 1, 10]))
-    print(vocab)
-    valid = pickle.load(open(path, "rb"))
-    sql2graph.transfer_dataset(valid, name="val")
-    pickle.dump(valid, open("interactions_new_valid.json", "wb"))
+    pickle.dump(output_vocab, open("vocab_no_anon", "wb"))
+    #valid = pickle.load(open(path, "rb"))
+    #sql2graph.transfer_dataset(valid, name="val")
+    #pickle.dump(valid, open("interactions_new_valid.json", "wb"))

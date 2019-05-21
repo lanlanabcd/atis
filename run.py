@@ -165,7 +165,7 @@ def train(model, data, params, last_save_file = None):
         train_eval_results = eval_fn(training_sample,
                                      model,
                                      params.train_maximum_sql_length,
-                                     "train-eval",
+                                     "evals/train-eval",
                                      gold_forcing=True,
                                      metrics=TRAIN_EVAL_METRICS,
                                      write_results=True)[0]
@@ -183,10 +183,14 @@ def train(model, data, params, last_save_file = None):
 
 
         # Run an evaluation step on the validation set.
+        if params.new_version:
+            suffix = "-new"
+        else:
+            suffix = "-old"
         valid_eval_results = eval_fn(valid_examples,
                                      model,
                                      params.train_maximum_sql_length,
-                                     "valid-eval",
+                                     "evals/valid-eval" + suffix + str(epochs),
                                      gold_forcing=True,
                                      database_username=params.database_username,
                                      database_password=params.database_password,
@@ -467,7 +471,6 @@ def main():
     """
     Newly added for debugging.
     """
-    print(len(data.output_vocabulary.raw_vocab["anon_symbol"]))
 
     # Construct the model object.
     model_type = InteractionATISModel if params.interaction_level else ATISModel
@@ -478,7 +481,7 @@ def main():
         data.output_vocabulary,
         data.anonymizer if params.anonymize and params.anonymization_scoring else None)
 
-    last_save_file = ""
+    last_save_file = params.save_file
 
     if params.train:
         last_save_file = train(model, data, params, last_save_file)

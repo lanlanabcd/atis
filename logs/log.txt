@@ -1,6 +1,6 @@
 Original number of training utterances:	7376
 Actual number of used training examples:	1091
-(Shortened by output limit of 200)
+(Shortened by output limit of 300)
 Number of steps per epoch:	1091
 Batch size:	1
 Epoch:	0

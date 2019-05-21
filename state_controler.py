@@ -22,6 +22,11 @@ class Controller:
         self.sql_stack = []
         self.next_negation = False
 
+    def ans_to_graph(self, ans):
+        for token in ans:
+            self.update(token)
+        return self.graph
+
     def initialize(self):
         self.graph = node()
         self.top = self.graph
@@ -41,7 +46,7 @@ class Controller:
     def update(self, token):
         label = self.vocab.label2id[self.vocab.token_to_label(token)]
         # print("state: ", self.state)
-        # print(token, label)
+        #print(token, label)
         # initial state, key words, columns & aggregators are allowed
         if self.state == 0:
             # eg: select [ max ] -> table
@@ -199,6 +204,7 @@ class Controller:
         elif self.state == 9:
             # eg: where <C> [ group by ] -> table
             if label == 2:
+                print(token)
                 assert len(self.sql_stack) == 1
                 self.state = 12
             # eg: where <C> [ and ] -> not/(<C>)/table

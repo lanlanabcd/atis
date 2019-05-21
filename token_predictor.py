@@ -262,12 +262,6 @@ class AnonymizationTokenPredictor(TokenPredictor):
         if controller:
             mask = controller.mask()
             mask = dy.inputTensor(mask)
-            try:
-                assert mask.dim() == vocab_scores.dim()
-            except:
-                print(mask.dim())
-                print(vocab_scores.dim())
-                exit(0)
             before = vocab_scores.value()
             m = mask.npvalue()
             vocab_scores = dy.cmult(vocab_scores, mask)

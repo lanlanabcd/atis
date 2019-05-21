@@ -157,10 +157,11 @@ class ATISModel():
                                                     final_snippet_size,
                                                     anonymizer)
 
+        # 注意：此处在input增加了decoder_state_size维度
         self.decoder = SequencePredictor(
             params,
             params.output_embedding_size +
-            attention_key_size,
+            attention_key_size + params.decoder_state_size,
             self.output_embedder,
             self._pc,
             token_predictor)

@@ -2,7 +2,7 @@ import sys
 import dynet_config
 args = sys.argv
 dynet_config.set(mem=10500, autobatch=True, requested_gpus=0 if "--no_gpus" in args or "--no_gpus=1" in args else 1)
-import dynet as dy
+#import dynet as dy
 
 import os
 import argparse
@@ -81,7 +81,7 @@ def interpret_args():
 
     ### Training parameters
     parser.add_argument('--batch_size', type=int, default=16)
-    parser.add_argument('--train_maximum_sql_length', type=int, default=200)
+    parser.add_argument('--train_maximum_sql_length', type=int, default=300)
     parser.add_argument('--train_evaluation_size', type=int, default=100)
 
     parser.add_argument('--dropout_amount', type=float, default=0.5)
@@ -100,12 +100,12 @@ def interpret_args():
 
     parser.add_argument('--evaluate', type=bool, default=True)
     parser.add_argument('--attention', type=bool, default=False)
-    parser.add_argument('--save_file', type=str, default="logs/save_30")
+    parser.add_argument('--save_file', type=str, default="")
     parser.add_argument('--enable_testing', type=bool, default=True)
     parser.add_argument('--use_predicted_queries', type=bool, default=True)
     parser.add_argument('--evaluate_split', type=str, default='valid')
     parser.add_argument('--evaluate_with_gold_forcing', type=bool, default=False)
-    parser.add_argument('--eval_maximum_sql_length', type=int, default=200)
+    parser.add_argument('--eval_maximum_sql_length', type=int, default=300)
     parser.add_argument('--results_note', type=str, default='')
 
     parser.add_argument('--reference_results', type=str, default='')
@@ -119,6 +119,9 @@ def interpret_args():
     parser.add_argument('--interaction_train', type=str, default="train_interactions")
     parser.add_argument('--interaction_valid', type=str, default="valid_interactions")
     parser.add_argument('--new_version', type=bool, default=True)
+    parser.add_argument('--copy', type=bool, default=False)
+
+    parser.add_argument('--eval_file', type=str, default='/Users/mac/PycharmProjects/atis/valid-eval.json')
 
     args = parser.parse_args()
 

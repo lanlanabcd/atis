@@ -147,7 +147,7 @@ def update_sums(metrics,
                 len(gold_query)
     if Metrics.STRING_ACCURACY in metrics:
         metrics_sums[Metrics.STRING_ACCURACY] += int(
-            gold_query == predicted_sequence)
+            flat_sequence in flat_gold_queries)
 
     if Metrics.CORRECT_TABLES in metrics:
         assert database_username, "You did not provide a database username"
@@ -307,8 +307,6 @@ def evaluate_interaction_sample(sample,
 
     use_gpu = not ("--no_gpus" in sys.argv or "--no_gpus=1" in sys.argv)
     for i, interaction in enumerate(sample):
-        if i % 20 == 0:
-            print(i, "interactions!")
         if use_gpu and interaction.identifier in ignore_with_gpu:
             continue
         elif not use_gpu and interaction.identifier not in ignore_with_gpu:
