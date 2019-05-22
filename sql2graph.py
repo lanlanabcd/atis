@@ -467,11 +467,11 @@ def transfer_dataset(dataset, controller=None, name=None, maximum=None):
         new_answers = []
         valids = []
         for i, utterance in enumerate(interaction.utterances):
-            print(len(utterance.gold_query_to_use))
+            #print(len(utterance.gold_query_to_use))
             if len(utterance.gold_query_to_use) > maximum:
                 continue
             else:
-                print(i)
+                #print(i)
                 valids.append(i)
             if len(valids) > 1:
                 cur_ans = utterance.gold_query_to_use
@@ -486,15 +486,22 @@ def transfer_dataset(dataset, controller=None, name=None, maximum=None):
                     if cur_ans[j] == '<S>' or cur_ans[j] == '<C>':
                         count += 1
                 new_answers.append(count)
+        print(valids)
         flag = False
         for i, utterance in enumerate(interaction.utterances):
-            if not flag or i not in valids:
+            if i not in valids:
                 utterance.copy_gold_query = None
+                continue
+            if not flag:
+                utterance.copy_gold_query = None
+                flag = True
                 continue
             cnt = 0
             last = new_answers.pop(0)
             if last == 0:
                 utterance.copy_gold_query = [0] + utterance.gold_query_to_use
+                print(utterance.gold_query_to_use)
+                print(utterance.copy_gold_query)
                 continue
             for index, token in enumerate(utterance.gold_query_to_use):
                 if token == '<S>' or token == '<C>':
@@ -502,9 +509,9 @@ def transfer_dataset(dataset, controller=None, name=None, maximum=None):
                     if cnt == last:
                         utterance.copy_gold_query = [last] + utterance.gold_query_to_use[index:]
                         break
-            #print(utterance.gold_query_to_use)
-            #print(utterance.input_seq_to_use)
-        #print("\n" + "==========")
+            print(utterance.gold_query_to_use)
+            print(utterance.copy_gold_query)
+        print("\n" + "==========")
     pickle.dump(dataset.examples, open("interactions_new_" + name, "wb"))
     print(dataset.examples[0].utterances[0].all_gold_queries)
     print("succeed!")

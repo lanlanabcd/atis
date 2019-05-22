@@ -23,18 +23,21 @@ def handle_agg(raw_sql):
     return " ".join(raw_sql)
 
 
-def eval_new(data, controller, cursor):
+def eval_new(data, controller, cursor, copy=False):
     query_match = 0
     execute_match = 0
     syntax = 0
     graph_fail = 0
     execute_fail = 0
     not_match = 0
+    copy_index = 0
     file_not_match1 = open("/Users/mac/PycharmProjects/atis/eval_results/EVAL-new-not_match-ans.txt", "w")
     file_not_match2 = open("/Users/mac/PycharmProjects/atis/eval_results/EVAL-new-not_match-gold.txt", "w")
     file_constrcut_fail = open("/Users/mac/PycharmProjects/atis/eval_results/EVAL-new-construct_fail.txt", "w")
     for cnt, item in enumerate(data):
         print(cnt)
+        if len(item['gold_query']) == len(item['prediction']):
+            copy_index += 1
         if item['flat_prediction'] in item['flat_gold_queries']:
             query_match += 1
             execute_match += 1
@@ -85,6 +88,8 @@ def eval_new(data, controller, cursor):
     print("Exact match: ", float(query_match) / len(data))
     print("Result match: ", float(execute_match) / len(data))
     print("Syntax Correct: ", float(syntax) / len(data))
+    if params.copy:
+        print("Copy Correct: ", float(copy_index) / len(data))
     print("***************")
     print("Construction Fail: ", float(graph_fail) / len(data))
     print("Execution Fail: ", float(execute_fail) / len(data))
@@ -148,7 +153,7 @@ if __name__ == "__main__":
     if params.new_version:
         vocab = pickle.load(open("/Users/mac/PycharmProjects/atis/vocab_no_anon", "rb"))
         controller = Controller(vocab)
-        eval_new(eval_data, controller, cursor)
+        eval_new(eval_data, controller, cursor, params.copy)
     else:
         check_gold(eval_data, cursor)
         #eval_old(eval_data, cursor, params)

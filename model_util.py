@@ -290,7 +290,8 @@ def evaluate_interaction_sample(sample,
                                 database_timeout=0,
                                 use_predicted_queries=False,
                                 write_results=False,
-                                use_gpu=False):
+                                use_gpu=False,
+                                copy=False):
     """ Evaluates a sample of interactions. """
     predictions_file = open(name + "_predictions.json", "w")
     print("Predicting with file " + str(name + "_predictions.json"))
@@ -335,6 +336,25 @@ def evaluate_interaction_sample(sample,
             num_utterances += 1
 
             sequence, loss, token_accuracy, _, decoder_results = pred
+            print(sequence)
+            copy_gold = interaction.gold_utterances()[j].gold_copy()
+            full_gold = interaction.gold_utterances()[j-1].gold_query()
+            print(copy_gold)
+            print(full_gold)
+            if copy_gold:
+                #assert isinstance(sequence[0], int)
+                record = 0
+                if sequence[0] == 0:
+                    sequence = sequence[1:]
+                else:
+                    for k, token in enumerate(full_gold):
+                        if token == '<C>' or token == '<S>':
+                            record += 1
+                            if record == sequence[0]:
+                                sequence = full_gold[:k] + sequence[1:]
+
+            print("after copied: ", sequence)
+            print("==========\n")
 
             if use_predicted_queries:
                 item = interaction.processed_utterances[j]

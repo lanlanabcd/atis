@@ -147,11 +147,14 @@ class SequencePredictor():
             intermediate = du.linear_transform(encoder_state, self.pick_pos_param)
             #print("intermediate: ", intermediate.dim()[0])
             #print("decoder: ", self.last_decoder_states[0].dim()[0])
-            #print("length of last decoder states:", len(self.last_decoder_states))
+            print("length of last decoder states:", len(self.last_decoder_states))
             score = [intermediate * decoder_state for decoder_state in self.last_decoder_states]
             score = dy.concatenate(score)
+            selected_pos = np.argmax(score.npvalue())
+            print("selected pos: ", selected_pos)
+            sequence.append(selected_pos)
             #print(gold_copy)
-            #print(gold_sequence)
+            print(gold_sequence)
             #print("============")
             pick_loss = dy.pickneglogsoftmax(score, gold_copy[0])
 

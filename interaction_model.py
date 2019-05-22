@@ -54,6 +54,7 @@ class InteractionATISModel(ATISModel):
         fed_sequence = []
         loss = None
         token_accuracy = 0.
+        print(gold_copy)
 
         if feed_gold_tokens:
             decoder_results, pick_loss = self.decoder(utterance_final_state,
@@ -88,11 +89,14 @@ class InteractionATISModel(ATISModel):
                 loss = dy.zeros((1, 1))
 
             if not training:
-                predicted_sequence = du.get_seq_from_scores(
-                    all_scores, all_alignments)
-
-                token_accuracy = du.per_token_accuracy(
-                    gold_query, predicted_sequence)
+                if gold_copy:
+                    predicted_sequence = decoder_results.sequence
+                    token_accuracy = du.per_token_accuracy(gold_copy, predicted_sequence)
+                else:
+                    predicted_sequence = du.get_seq_from_scores(
+                        all_scores, all_alignments)
+                    token_accuracy = du.per_token_accuracy(
+                        gold_query, predicted_sequence)
 
             fed_sequence = gold_query
         else:
@@ -112,8 +116,6 @@ class InteractionATISModel(ATISModel):
         decoder_states = [
             pred.decoder_state for pred in decoder_results.predictions]
 
-        if pick_loss:
-            fed_sequence = fed_sequence[1:]
         for token, state in zip(fed_sequence[:-1], decoder_states[1:]):
             if snippet_handler.is_snippet(token):
                 snippet_length = 0
@@ -375,6 +377,7 @@ class InteractionATISModel(ATISModel):
 
         discourse_state, discourse_lstm_states = self._initialize_discourse_states()
 
+        new_turn = True
         for utterance in interaction.gold_utterances():
             input_sequence = utterance.input_sequence()
 
@@ -413,13 +416,21 @@ class InteractionATISModel(ATISModel):
                     snippets = self._encode_snippets(
                         previous_query, available_snippets)
 
+            if self.params.copy:
+                gold_copy = utterance.gold_copy()
+            else:
+                gold_copy = None
+
             prediction = self.predict_turn(final_utterance_state,
                                            utterance_states,
                                            max_generation_length,
                                            gold_query=utterance.gold_query(),
                                            snippets=snippets,
                                            input_sequence=flat_sequence,
-                                           feed_gold_tokens=feed_gold_query)
+                                           feed_gold_tokens=feed_gold_query,
+                                           gold_copy=gold_copy,
+                                           first_utterance=new_turn)
+            new_turn = False
             decoder_states = prediction[3]
             predictions.append(prediction)
 

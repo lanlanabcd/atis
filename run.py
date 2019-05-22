@@ -146,6 +146,7 @@ def train(model, data, params, last_save_file = None):
         model.set_learning_rate(
             learning_rate_coefficient *
             params.initial_learning_rate)
+        """
         # Run a training step.
         if params.interaction_level:
             epoch_loss = train_epoch_with_interactions(
@@ -180,7 +181,7 @@ def train(model, data, params, last_save_file = None):
             #experiment.add_scalar_value(
             #    "train_gold_" + name.name, value, step=epochs)
 
-
+        """
 
         # Run an evaluation step on the validation set.
         if params.new_version:
@@ -196,7 +197,8 @@ def train(model, data, params, last_save_file = None):
                                      database_password=params.database_password,
                                      database_timeout=params.database_timeout,
                                      metrics=VALID_EVAL_METRICS_WITHOUT_MYSQL,
-                                     write_results=True)[0]
+                                     write_results=True,
+                                     copy=params.copy)[0]
         for name, value in valid_eval_results.items():
             log.put("valid gold-passing " + name.name + ":\t" + "%.2f" % value)
             #experiment.add_scalar_value(
@@ -461,12 +463,12 @@ def main():
         print(len(my_vocab))
 
         data.output_vocabulary = my_vocab
-        #new_interaction_train = pickle.load(open("interactions_new_train", "rb"))
-        #new_interaction_valid = pickle.load(open("interactions_new_valid", "rb"))
-        #data.train_data.examples = new_interaction_train
-        #data.valid_data.examples = new_interaction_valid
-        transfer_dataset(data.valid_data, name="valid", maximum=params.train_maximum_sql_length)
-        transfer_dataset(data.train_data, name="train", maximum=params.train_maximum_sql_length)
+        new_interaction_train = pickle.load(open("interactions_new_train", "rb"))
+        new_interaction_valid = pickle.load(open("interactions_new_valid", "rb"))
+        data.train_data.examples = new_interaction_train
+        data.valid_data.examples = new_interaction_valid
+        #transfer_dataset(data.valid_data, name="valid", maximum=10000)
+        #transfer_dataset(data.train_data, name="train", maximum=params.train_maximum_sql_length)
 
     # Construct the model object.
     model_type = InteractionATISModel if params.interaction_level else ATISModel
@@ -477,7 +479,8 @@ def main():
         data.output_vocabulary,
         data.anonymizer if params.anonymize and params.anonymization_scoring else None)
 
-    last_save_file = params.save_file
+    #last_save_file = params.save_file
+    last_save_file = "logs/save_14"
 
     if params.train:
         last_save_file = train(model, data, params, last_save_file)

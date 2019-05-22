@@ -4,3 +4,36 @@ Actual number of used training examples:	1091
 Number of steps per epoch:	1091
 Batch size:	1
 Epoch:	0
+valid gold-passing TOKEN_ACCURACY:	98.31
+valid gold-passing LOSS:	10.94
+valid gold-passing STRING_ACCURACY:	16.46
+maximum accuracy:	98.31254664212597
+patience:	10.1
+save file:	logs/save_0
+countdown:	9
+
+Epoch:	1
+valid gold-passing TOKEN_ACCURACY:	98.35
+valid gold-passing LOSS:	11.00
+valid gold-passing STRING_ACCURACY:	16.14
+learning rate coefficient:	0.8
+maximum accuracy:	98.34835302463235
+patience:	10.201
+save file:	logs/save_1
+countdown:	9
+
+Epoch:	2
+valid gold-passing TOKEN_ACCURACY:	98.32
+valid gold-passing LOSS:	11.24
+valid gold-passing STRING_ACCURACY:	14.87
+learning rate coefficient:	0.6400000000000001
+maximum string accuracy:	14.873417721518987
+countdown:	8
+
+Epoch:	3
+valid gold-passing TOKEN_ACCURACY:	98.29
+valid gold-passing LOSS:	11.20
+valid gold-passing STRING_ACCURACY:	14.56
+countdown:	7
+
+Epoch:	4

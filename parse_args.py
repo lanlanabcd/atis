@@ -119,7 +119,7 @@ def interpret_args():
     parser.add_argument('--interaction_train', type=str, default="train_interactions")
     parser.add_argument('--interaction_valid', type=str, default="valid_interactions")
     parser.add_argument('--new_version', type=bool, default=True)
-    parser.add_argument('--copy', type=bool, default=False)
+    parser.add_argument('--copy', type=bool, default=True)
 
     parser.add_argument('--eval_file', type=str, default='/Users/mac/PycharmProjects/atis/valid-eval.json')
 
