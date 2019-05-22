@@ -82,6 +82,7 @@ class SequencePredictor():
                  output_embedder,
                  model,
                  token_predictor):
+        self.decoder_state_size = params.decoder_state_size
         self.lstms = du.create_multilayer_lstm_params(
             params.decoder_num_layers, input_size, params.decoder_state_size, model, "LSTM-d")
         self.token_predictor = token_predictor
@@ -89,6 +90,8 @@ class SequencePredictor():
         self.start_token_embedding = du.add_params(model,
                                                    (params.output_embedding_size,),
                                                    "y-0")
+        self.last_decoder_states = []
+        self.pick_pos_param = du.add_params(model, (params.encoder_state_size, params.decoder_state_size), "pick")
 
     def _initialize_decoder_lstm(self, encoder_state):
         decoder_lstm_states = []
@@ -109,11 +112,18 @@ class SequencePredictor():
                  snippets=None,
                  gold_sequence=None,
                  input_sequence=None,
-                 dropout_amount=0.):
+                 dropout_amount=0.,
+                 controller=None,
+                 first_utterance=True,
+                 gold_copy=None):
         """ Generates a sequence. """
         index = 0
 
         context_vector_size = self.token_predictor.attention_module.value_size
+        decoder_state_size = self.decoder_state_size
+
+        state_stack = []
+        pick_loss = None
 
         # Decoder states: just the initialized decoder.
         # Current input to decoder: phi(start_token) ; zeros the size of the
@@ -124,29 +134,100 @@ class SequencePredictor():
 
         decoder_states = self._initialize_decoder_lstm(final_encoder_state)
         decoder_input = dy.concatenate([self.start_token_embedding,
-                                        dy.zeroes((context_vector_size,))])
+                                        dy.zeroes((context_vector_size,)),
+                                        dy.zeros((decoder_state_size,))])
 
         continue_generating = True
+        if controller:
+            controller.initialize()
+
+        # TODO: 一开始通过LAST_DECODER_STATES和当前ENCODER STATES来预测起始值，然后可以把之前的扔了
+        if (not first_utterance) and gold_copy:
+            encoder_state = final_encoder_state[1][-1]
+            intermediate = du.linear_transform(encoder_state, self.pick_pos_param)
+            #print("intermediate: ", intermediate.dim()[0])
+            #print("decoder: ", self.last_decoder_states[0].dim()[0])
+            #print("length of last decoder states:", len(self.last_decoder_states))
+            score = [intermediate * decoder_state for decoder_state in self.last_decoder_states]
+            score = dy.concatenate(score)
+            #print(gold_copy)
+            #print(gold_sequence)
+            #print("============")
+            pick_loss = dy.pickneglogsoftmax(score, gold_copy[0])
+
+            self.last_decoder_states = [final_encoder_state[1][-1]]
+            start_pos = gold_copy[0]
+            cnt = 0
+            if start_pos == 0:
+                index = 0
+            else:
+                for num, token in enumerate(gold_sequence):
+                    if token == '<C>' or token == '<S>':
+                        cnt += 1
+                        if cnt == start_pos:
+                            index = num
+                            break
+                    _, decoder_state, decoder_states = du.forward_one_multilayer(
+                        decoder_input, decoder_states, dropout_amount)
+                    prediction_input = PredictionInput(decoder_state=decoder_state,
+                                                   input_hidden_states=encoder_states,
+                                                   snippets=snippets,
+                                                   input_sequence=input_sequence)
+                    prediction = self.token_predictor(prediction_input,
+                                                  dropout_amount=dropout_amount,
+                                                  controller=controller)
+                    token = gold_sequence[num]
+                    if token == '<C>' or token == '<S>':
+                        state_stack.append(decoder_state)
+                        self.last_decoder_states.append(decoder_state)
+                    if token == '<EOT>' and state_stack:
+                        decoder_input = dy.concatenate([self.output_embedder(token), prediction.attention_results.vector,
+                                                        state_stack.pop(-1)])
+                    else:
+                        decoder_input = dy.concatenate(
+                            [self.output_embedder.bow_snippets(token,
+                                                               snippets),
+                             prediction.attention_results.vector,
+                             dy.zeros((decoder_state_size,))])
+                    controller.update(token)
+        else:
+            self.last_decoder_states = [final_encoder_state[1][-1]]
 
         while continue_generating:
             if len(sequence) == 0 or sequence[-1] != EOS_TOK:
                 _, decoder_state, decoder_states = du.forward_one_multilayer(
                     decoder_input, decoder_states, dropout_amount)
+                if gold_sequence:
+                    truth_label = controller.vocab.token_to_label(gold_sequence[index])
+                    #print("Ground Truth: ", gold_sequence[index], "label:", truth_label)
                 prediction_input = PredictionInput(decoder_state=decoder_state,
                                                    input_hidden_states=encoder_states,
                                                    snippets=snippets,
                                                    input_sequence=input_sequence)
                 prediction = self.token_predictor(prediction_input,
-                                                  dropout_amount=dropout_amount)
+                                                  dropout_amount=dropout_amount,
+                                                  controller=controller)
 
                 predictions.append(prediction)
 
                 if gold_sequence:
-                    decoder_input = dy.concatenate(
-                        [self.output_embedder.bow_snippets(gold_sequence[index],
+                    token = gold_sequence[index]
+                    if token == '<C>' or token == '<S>':
+                        state_stack.append(decoder_state)
+                        self.last_decoder_states.append(decoder_state)
+                    if token == '<EOT>' and state_stack:
+                        decoder_input = dy.concatenate([self.output_embedder(token), prediction.attention_results.vector,
+                                                        state_stack.pop(-1)])
+                    else:
+                        decoder_input = dy.concatenate(
+                        [self.output_embedder.bow_snippets(token,
                                                            snippets),
-                         prediction.attention_results.vector])
-                    sequence.append(gold_sequence[index])
+                         prediction.attention_results.vector,
+                         dy.zeros((decoder_state_size,))])
+                    sequence.append(token)
+                    if controller:
+                        #print(gold_sequence[index])
+                        controller.update(gold_sequence[index])
 
                     if index >= len(gold_sequence) - 1:
                         continue_generating = False
@@ -166,6 +247,9 @@ class SequencePredictor():
                     argmax_index = int(np.argmax(probabilities))
 
                     argmax_token = distribution_map[argmax_index]
+                    #print(len(probabilities))
+                    if controller:
+                        controller.update(argmax_token)
                     sequence.append(argmax_token)
 
                     decoder_input = dy.concatenate(
@@ -181,4 +265,4 @@ class SequencePredictor():
 
         return SQLPrediction(predictions,
                              sequence,
-                             probability)
+                             probability), pick_loss

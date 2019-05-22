@@ -42,7 +42,9 @@ class InteractionATISModel(ATISModel):
                      snippets=None,
                      input_sequence=None,
                      feed_gold_tokens=False,
-                     training=False):
+                     training=False,
+                     first_utterance=True,
+                     gold_copy=None):
         """ Gets a prediction for a single turn -- calls decoder and updates loss, etc.
 
         TODO:  this can probably be split into two methods, one that just predicts
@@ -54,23 +56,36 @@ class InteractionATISModel(ATISModel):
         token_accuracy = 0.
 
         if feed_gold_tokens:
-            decoder_results = self.decoder(utterance_final_state,
-                                           input_hidden_states,
-                                           max_generation_length,
-                                           gold_sequence=gold_query,
-                                           input_sequence=input_sequence,
-                                           snippets=snippets,
-                                           dropout_amount=self.dropout)
+            decoder_results, pick_loss = self.decoder(utterance_final_state,
+                                            input_hidden_states,
+                                            max_generation_length,
+                                            gold_sequence=gold_query,
+                                            input_sequence=input_sequence,
+                                            snippets=snippets,
+                                            dropout_amount=self.dropout,
+                                            controller=self.controller,
+                                            first_utterance=first_utterance,
+                                            gold_copy=gold_copy)
 
             all_scores = [
                 step.scores for step in decoder_results.predictions]
             all_alignments = [
                 step.aligned_tokens for step in decoder_results.predictions]
             # Compute the loss
-            loss = du.compute_loss(gold_query,
-                                   all_scores,
-                                   all_alignments,
-                                   get_token_indices)
+            if not pick_loss:
+                loss = du.compute_loss(gold_query,
+                                       all_scores,
+                                       all_alignments,
+                                       get_token_indices)
+            else:
+                loss = du.compute_loss(gold_copy[1:],
+                                       all_scores,
+                                       all_alignments,
+                                       get_token_indices)
+            if pick_loss:
+                loss += pick_loss
+            if not loss:
+                loss = dy.zeros((1, 1))
 
             if not training:
                 predicted_sequence = du.get_seq_from_scores(
@@ -81,12 +96,13 @@ class InteractionATISModel(ATISModel):
 
             fed_sequence = gold_query
         else:
-            decoder_results = self.decoder(utterance_final_state,
+            decoder_results, pick_loss = self.decoder(utterance_final_state,
                                            input_hidden_states,
                                            max_generation_length,
                                            input_sequence=input_sequence,
                                            snippets=snippets,
-                                           dropout_amount=self.dropout)
+                                           dropout_amount=self.dropout,
+                                            first_utterance=first_utterance)
             predicted_sequence = decoder_results.sequence
 
             fed_sequence = predicted_sequence
@@ -96,6 +112,8 @@ class InteractionATISModel(ATISModel):
         decoder_states = [
             pred.decoder_state for pred in decoder_results.predictions]
 
+        if pick_loss:
+            fed_sequence = fed_sequence[1:]
         for token, state in zip(fed_sequence[:-1], decoder_states[1:]):
             if snippet_handler.is_snippet(token):
                 snippet_length = 0
@@ -142,6 +160,9 @@ class InteractionATISModel(ATISModel):
 
         discourse_state, discourse_lstm_states = self._initialize_discourse_states()
 
+        # 指示是否开始新的轮次
+        new_turn = True
+
         for utterance_index, utterance in enumerate(
                 interaction.gold_utterances()):
             if interaction.identifier in LIMITED_INTERACTIONS \
@@ -163,6 +184,10 @@ class InteractionATISModel(ATISModel):
                     prob_align=snippet_alignment_probability) + [vocab.EOS_TOK]
             else:
                 gold_query = utterance.gold_query()
+                if self.params.copy:
+                    gold_copy = utterance.gold_copy()
+                else:
+                    gold_copy = None
 
             # Encode the utterance, and update the discourse-level states
             final_utterance_state, utterance_states = self.utterance_encoder(
@@ -198,6 +223,8 @@ class InteractionATISModel(ATISModel):
 
             if len(gold_query) <= max_generation_length \
                     and len(previous_query) <= max_generation_length:
+                #print("=====")
+                print(utterance_index)
                 prediction = self.predict_turn(final_utterance_state,
                                                utterance_states,
                                                max_generation_length,
@@ -205,7 +232,10 @@ class InteractionATISModel(ATISModel):
                                                snippets=snippets,
                                                input_sequence=flat_sequence,
                                                feed_gold_tokens=True,
-                                               training=True)
+                                               training=True,
+                                               first_utterance=new_turn,
+                                               gold_copy=gold_copy)
+                new_turn = False
                 loss = prediction[1]
                 decoder_states = prediction[3]
                 total_gold_tokens += len(gold_query)
@@ -304,7 +334,7 @@ class InteractionATISModel(ATISModel):
                     username=self.params.database_username,
                     password=self.params.database_password,
                     timeout=self.params.database_timeout):
-                utterance.set_pred_query(
+                utterance.set_predicted_query(
                     interaction.remove_snippets(predicted_sequence))
                 interaction.add_utterance(
                     utterance,

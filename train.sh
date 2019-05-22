@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 python3 run.py --raw_train_filename="../atis_data/data/resplit/processed/train_with_tables.pkl" \
                --raw_dev_filename="../atis_data/data/resplit/processed/dev_with_tables.pkl" \
                --raw_validation_filename="../atis_data/data/resplit/processed/valid_with_tables.pkl" \

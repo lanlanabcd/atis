@@ -9,6 +9,7 @@ from decoder import SequencePredictor
 from encoder import Encoder
 from embedder import Embedder
 from token_predictor import construct_token_predictor
+from state_controler import Controller
 
 
 def get_token_indices(token, index_to_token):
@@ -84,6 +85,10 @@ class ATISModel():
 
         self._pc = dy.ParameterCollection()
 
+        if params.new_version:
+            self.controller = Controller(output_vocabulary)
+        else:
+            self.controller = None
         # Create the input embeddings
         self.input_embedder = Embedder(self._pc,
                                        params.input_embedding_size,
@@ -152,10 +157,11 @@ class ATISModel():
                                                     final_snippet_size,
                                                     anonymizer)
 
+        # 注意：此处在input增加了decoder_state_size维度
         self.decoder = SequencePredictor(
             params,
             params.output_embedding_size +
-            attention_key_size,
+            attention_key_size + params.decoder_state_size,
             self.output_embedder,
             self._pc,
             token_predictor)
@@ -297,6 +303,7 @@ class ATISModel():
 
         batch.start()
         while not batch.done():
+            # 每个batch是16个interactions,每个interaction是不定数目utterances的集合
             example = batch.next()
 
             # First, encode the input sequences.
@@ -307,7 +314,7 @@ class ATISModel():
 
             # Add positional embeddings if appropriate
             if self.params.state_positional_embeddings:
-                utterance_hidden_states = self._add_positional_embeddings(
+                utterance_hidden_states, flat_sequence = self._add_positional_embeddings(
                     utterance_hidden_states, input_sequences)
 
             # Encode the snippets
@@ -326,7 +333,8 @@ class ATISModel():
                 snippets=snippets,
                 gold_sequence=example.gold_query(),
                 dropout_amount=self.dropout,
-                input_sequence=flat_seq)
+                input_sequence=flat_seq,
+                controller=self.controller)
             all_scores = [
                 step.scores for step in decoder_results.predictions]
             all_alignments = [
@@ -362,7 +370,7 @@ class ATISModel():
 
         # Add positional embeddings if appropriate
         if self.params.state_positional_embeddings:
-            utterance_hidden_states = self._add_positional_embeddings(
+            utterance_hidden_states, flat_sequence = self._add_positional_embeddings(
                 utterance_hidden_states, input_sequences)
 
         # Encode the snippets
@@ -381,13 +389,14 @@ class ATISModel():
             snippets=snippets,
             gold_sequence=example.gold_query() if feed_gold_query else None,
             dropout_amount=self.dropout,
-            input_sequence=flat_seq)
+            input_sequence=flat_seq,
+            controller=self.controller)
 
         all_scores = [
             step.scores for step in decoder_results.predictions]
         all_alignments = [
             step.aligned_tokens for step in decoder_results.predictions]
-        loss = dy.zeros(())
+        loss = dy.zeros((1, 1))
         if feed_gold_query:
             loss = du.compute_loss(example.gold_query(),
                                    all_scores,

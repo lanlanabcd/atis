@@ -4,6 +4,7 @@ from collections import namedtuple
 
 import dynet as dy
 import dynet_utils as du
+import numpy as np
 
 from attention import Attention
 
@@ -240,7 +241,8 @@ class AnonymizationTokenPredictor(TokenPredictor):
 
     def __call__(self,
                  prediction_input,
-                 dropout_amount=0.):
+                 dropout_amount=0.,
+                 controller=None):
         decoder_state = prediction_input.decoder_state
         input_hidden_states = prediction_input.input_hidden_states
         input_sequence = prediction_input.input_sequence
@@ -256,6 +258,20 @@ class AnonymizationTokenPredictor(TokenPredictor):
             state_and_attn, dropout_amount=dropout_amount)
         vocab_scores, vocab_tokens = self._score_vocabulary_tokens(
             intermediate_state)
+
+        if controller:
+            mask = controller.mask()
+            mask = dy.inputTensor(mask)
+            before = vocab_scores.value()
+            m = mask.npvalue()
+            vocab_scores = dy.cmult(vocab_scores, mask)
+            after = vocab_scores.value()
+            before_max = np.argmax(before)
+            before_label = controller.vocab.token_to_label(controller.vocab.id_to_token(before_max))
+            after_max = np.argmax(after)
+            after_label = controller.vocab.token_to_label(controller.vocab.id_to_token(after_max))
+            #print("before label: ", before_label, "token:", controller.vocab.id_to_token(before_max))
+            #print("after label: ", after_label, "token:", controller.vocab.id_to_token(after_max))
 
         final_scores = vocab_scores
         aligned_tokens = []
